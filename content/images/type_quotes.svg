@@ -1,0 +1,41 @@
+<svg width="100%" viewBox="0 0 470 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title>What the quotes decide</title>
+  <desc>The same asterisk acting as printable text inside quotes and as the repeat operator outside them, then two expressions compared.</desc>
+  <style>
+    .ink   { fill: #1A1A1A; }
+    .muted { fill: #6B6B6B; }
+    .wire  { stroke: #6B6B6B; }
+    @media (prefers-color-scheme: dark) {
+      .ink   { fill: #FFFFFF; }
+      .muted { fill: #FFFFFF; }
+      .wire  { stroke: #9A9A95; }
+    }
+  </style>
+  <defs>
+    <marker id="qArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="wire" d="M2 1L8 5L2 9" fill="none" stroke="#6B6B6B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="235" y="22" text-anchor="middle" font-size="13" font-weight="500" class="ink" fill="#1A1A1A">What the quotes decide</text>
+  <text x="170" y="78" text-anchor="middle" dominant-baseline="central" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">&quot;*&quot;</text>
+  <text x="215" y="78" text-anchor="middle" dominant-baseline="central" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">*</text>
+  <text x="252" y="78" text-anchor="middle" dominant-baseline="central" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">10</text>
+  <path class="wire" d="M156 92 L130 114" fill="none" stroke="#6B6B6B" stroke-width="1.5"/>
+  <text x="126" y="128" text-anchor="end" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">inside quotes:</text>
+  <text x="126" y="143" text-anchor="end" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">a character to print</text>
+  <path class="wire" d="M220 62 L244 44" fill="none" stroke="#6B6B6B" stroke-width="1.5"/>
+  <text x="250" y="38" text-anchor="start" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">outside quotes:</text>
+  <text x="250" y="53" text-anchor="start" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">an instruction to repeat</text>
+  <path class="wire" d="M30 172 L440 172" fill="none" stroke="#6B6B6B" stroke-width="1.5"/>
+  <text x="30" y="204" text-anchor="start" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">&quot;3&quot; * 10</text>
+  <line class="wire" x1="140" y1="204" x2="172" y2="204" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#qArrow)"/>
+  <rect x="178" y="188" width="150" height="32" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="253" y="204" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">3333333333</text>
+  <text x="30" y="234" text-anchor="start" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">quoted, so it is text — repeated</text>
+  <text x="30" y="266" text-anchor="start" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">3 * 10</text>
+  <line class="wire" x1="140" y1="266" x2="172" y2="266" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#qArrow)"/>
+  <rect x="178" y="250" width="90" height="32" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="223" y="266" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">30</text>
+  <text x="30" y="296" text-anchor="start" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">plain, so it is a number — multiplied</text>
+</svg>

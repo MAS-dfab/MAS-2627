@@ -9,6 +9,12 @@ Here you'll find all the resources, code, and documentation you need for a succe
 - Share your ideas and code
 - Build something amazing together!
 
+### 🐍 First session: Hello Python
+
+Runs in the browser, nothing to install:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MAS-dfab/MAS-2627/blob/master/00_Introductions/L01_HelloPython/python_intro.ipynb)
+
 ## Repository Structure
 
 | Folder | Content |
