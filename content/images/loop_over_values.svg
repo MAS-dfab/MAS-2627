@@ -1,0 +1,96 @@
+<svg width="100%" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title>Iterating over a value</title>
+  <desc>A for loop walking through the values 3, 12, 7 and 20 in turn. On each pass the loop variable width holds one of the values and a row of that many stars is printed.</desc>
+  <style>
+    .ink   { fill: #1A1A1A; }
+    .muted { fill: #6B6B6B; }
+    .wire  { stroke: #6B6B6B; }
+    .ring  { fill: none; stroke: #1A1A1A; }
+    @media (prefers-color-scheme: dark) {
+      .ink   { fill: #FFFFFF; }
+      .muted { fill: #FFFFFF; }
+      .wire  { stroke: #9A9A95; }
+      .ring  { stroke: #FFFFFF; }
+    }
+    @keyframes lovStep {
+      0.00%, 20.00% { transform: translateX(0px); }
+      25.00%, 45.00% { transform: translateX(70px); }
+      50.00%, 70.00% { transform: translateX(140px); }
+      75.00%, 95.00% { transform: translateX(210px); }
+      100% { transform: translateX(210px); }
+    }
+    @keyframes lovRead0 {
+      0%, 24.99% { opacity: 1; }
+      25.00%, 100% { opacity: 0; }
+    }
+    @keyframes lovRead1 {
+      0%, 24.99% { opacity: 0; }
+      25.00%, 49.99% { opacity: 1; }
+      50.00%, 100% { opacity: 0; }
+    }
+    @keyframes lovRead2 {
+      0%, 49.99% { opacity: 0; }
+      50.00%, 74.99% { opacity: 1; }
+      75.00%, 100% { opacity: 0; }
+    }
+    @keyframes lovRead3 {
+      0%, 74.99% { opacity: 0; }
+      75.00%, 100% { opacity: 1; }
+    }
+    @keyframes lovRow0 {
+      0%, 1% { opacity: 0; }
+      2.00%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes lovRow1 {
+      0%, 25.00% { opacity: 0; }
+      27.00%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes lovRow2 {
+      0%, 50.00% { opacity: 0; }
+      52.00%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes lovRow3 {
+      0%, 75.00% { opacity: 0; }
+      77.00%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .lov-read-0 { animation: lovRead0 5.2s linear infinite; }
+    .lov-read-1 { animation: lovRead1 5.2s linear infinite; }
+    .lov-read-2 { animation: lovRead2 5.2s linear infinite; }
+    .lov-read-3 { animation: lovRead3 5.2s linear infinite; }
+    .lov-row-0 { animation: lovRow0 5.2s linear infinite; }
+    .lov-row-1 { animation: lovRow1 5.2s linear infinite; }
+    .lov-row-2 { animation: lovRow2 5.2s linear infinite; }
+    .lov-row-3 { animation: lovRow3 5.2s linear infinite; }
+    .cursor { animation: lovStep 5.2s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor, .readout, .row { animation: none; }
+    }
+  </style>
+
+  <text x="210" y="22" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" class="ink" fill="#1A1A1A">Iterating over a value</text>
+  <text x="210" y="48" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">for width in [3, 12, 7, 20]:</text>
+  <text x="210" y="66" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="muted" fill="#6B6B6B">    print(&quot;*&quot; * width)</text>
+  <rect x="74.0" y="90" width="62" height="34" rx="4" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="105.0" y="107" text-anchor="middle" dominant-baseline="central" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">3</text>
+  <rect x="144.0" y="90" width="62" height="34" rx="4" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="175.0" y="107" text-anchor="middle" dominant-baseline="central" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">12</text>
+  <rect x="214.0" y="90" width="62" height="34" rx="4" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="245.0" y="107" text-anchor="middle" dominant-baseline="central" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">7</text>
+  <rect x="284.0" y="90" width="62" height="34" rx="4" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="315.0" y="107" text-anchor="middle" dominant-baseline="central" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">20</text>
+  <rect class="cursor ring" x="70.0" y="86" width="70" height="42" rx="6" stroke-width="1.5" stroke="#1A1A1A"/>
+  <text x="210" y="146" text-anchor="middle" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">one pass per value, in the order they are written</text>
+  <text x="210" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout lov-read-0" fill="#1A1A1A">width = 3</text>
+  <text x="210" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout lov-read-1" opacity="0" fill="#1A1A1A">width = 12</text>
+  <text x="210" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout lov-read-2" opacity="0" fill="#1A1A1A">width = 7</text>
+  <text x="210" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout lov-read-3" opacity="0" fill="#1A1A1A">width = 20</text>
+  <text x="210" y="200" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row lov-row-0" fill="#1A1A1A">***</text>
+  <text x="210" y="220" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row lov-row-1" fill="#1A1A1A">************</text>
+  <text x="210" y="240" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row lov-row-2" fill="#1A1A1A">*******</text>
+  <text x="210" y="260" text-anchor="middle" dominant-baseline="central" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row lov-row-3" fill="#1A1A1A">********************</text>
+  <text x="210" y="286" text-anchor="middle" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">range(5) was only ever a shorthand for the values 0, 1, 2, 3, 4.</text>
+</svg>

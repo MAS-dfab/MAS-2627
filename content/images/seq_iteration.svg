@@ -1,0 +1,147 @@
+<svg width="100%" viewBox="0 0 470 336" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title>Iterating over a sequence</title>
+  <desc>A for loop walking through a list of seven symbols. On each pass the loop variable symbol holds the next item of the list and prints a row of it, and the rows accumulate into a gradient.</desc>
+  <style>
+    .ink   { fill: #1A1A1A; }
+    .muted { fill: #6B6B6B; }
+    .wire  { stroke: #6B6B6B; }
+    .ring  { fill: none; stroke: #1A1A1A; }
+    @media (prefers-color-scheme: dark) {
+      .ink   { fill: #FFFFFF; }
+      .muted { fill: #FFFFFF; }
+      .wire  { stroke: #9A9A95; }
+      .ring  { stroke: #FFFFFF; }
+    }
+    @keyframes seqStep {
+      0.00%, 11.43% { transform: translateX(0px); }
+      14.29%, 25.71% { transform: translateX(58px); }
+      28.57%, 40.00% { transform: translateX(116px); }
+      42.86%, 54.29% { transform: translateX(174px); }
+      57.14%, 68.57% { transform: translateX(232px); }
+      71.43%, 82.86% { transform: translateX(290px); }
+      85.71%, 97.14% { transform: translateX(348px); }
+      100% { transform: translateX(348px); }
+    }
+    @keyframes seqRead0 {
+      0%, 14.28% { opacity: 1; }
+      14.29%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead1 {
+      0%, 14.28% { opacity: 0; }
+      14.29%, 28.56% { opacity: 1; }
+      28.57%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead2 {
+      0%, 28.56% { opacity: 0; }
+      28.57%, 42.85% { opacity: 1; }
+      42.86%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead3 {
+      0%, 42.85% { opacity: 0; }
+      42.86%, 57.13% { opacity: 1; }
+      57.14%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead4 {
+      0%, 57.13% { opacity: 0; }
+      57.14%, 71.42% { opacity: 1; }
+      71.43%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead5 {
+      0%, 71.42% { opacity: 0; }
+      71.43%, 85.70% { opacity: 1; }
+      85.71%, 100% { opacity: 0; }
+    }
+    @keyframes seqRead6 {
+      0%, 85.70% { opacity: 0; }
+      85.71%, 100% { opacity: 1; }
+    }
+    @keyframes seqRow0 {
+      0%, 1% { opacity: 0; }
+      2.00%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow1 {
+      0%, 14.29% { opacity: 0; }
+      16.29%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow2 {
+      0%, 28.57% { opacity: 0; }
+      30.57%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow3 {
+      0%, 42.86% { opacity: 0; }
+      44.86%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow4 {
+      0%, 57.14% { opacity: 0; }
+      59.14%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow5 {
+      0%, 71.43% { opacity: 0; }
+      73.43%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes seqRow6 {
+      0%, 85.71% { opacity: 0; }
+      87.71%, 96% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .seq-read-0 { animation: seqRead0 7s linear infinite; }
+    .seq-read-1 { animation: seqRead1 7s linear infinite; }
+    .seq-read-2 { animation: seqRead2 7s linear infinite; }
+    .seq-read-3 { animation: seqRead3 7s linear infinite; }
+    .seq-read-4 { animation: seqRead4 7s linear infinite; }
+    .seq-read-5 { animation: seqRead5 7s linear infinite; }
+    .seq-read-6 { animation: seqRead6 7s linear infinite; }
+    .seq-row-0 { animation: seqRow0 7s linear infinite; }
+    .seq-row-1 { animation: seqRow1 7s linear infinite; }
+    .seq-row-2 { animation: seqRow2 7s linear infinite; }
+    .seq-row-3 { animation: seqRow3 7s linear infinite; }
+    .seq-row-4 { animation: seqRow4 7s linear infinite; }
+    .seq-row-5 { animation: seqRow5 7s linear infinite; }
+    .seq-row-6 { animation: seqRow6 7s linear infinite; }
+    .cursor { animation: seqStep 7s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor, .readout, .row { animation: none; }
+    }
+  </style>
+
+  <text x="235" y="22" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" class="ink" fill="#1A1A1A">Iterating over a sequence</text>
+  <text x="235" y="48" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink" fill="#1A1A1A">for symbol in symbols:</text>
+  <text x="235" y="66" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="muted" fill="#6B6B6B">    print(symbol * 24)</text>
+  <rect x="34" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="60.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">.</text>
+  <rect x="92" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="118.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">:</text>
+  <rect x="150" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="176.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">-</text>
+  <rect x="208" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="234.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">=</text>
+  <rect x="266" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="292.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">+</text>
+  <rect x="324" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="350.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">*</text>
+  <rect x="382" y="88" width="52" height="40" rx="3" fill="#F0F0EE" stroke="#C9C9C4" stroke-width="0.5"/>
+  <text x="408.0" y="108" text-anchor="middle" dominant-baseline="central" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" fill="#3D3D3A">#</text>
+  <rect class="cursor ring" x="30" y="84" width="60" height="48" rx="5" stroke-width="1.5" stroke="#1A1A1A"/>
+  <text x="235" y="148" text-anchor="middle" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">no index, no len — the sequence hands you its items one at a time</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-0" fill="#1A1A1A">symbol = &quot;.&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-1" opacity="0" fill="#1A1A1A">symbol = &quot;:&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-2" opacity="0" fill="#1A1A1A">symbol = &quot;-&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-3" opacity="0" fill="#1A1A1A">symbol = &quot;=&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-4" opacity="0" fill="#1A1A1A">symbol = &quot;+&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-5" opacity="0" fill="#1A1A1A">symbol = &quot;*&quot;</text>
+  <text x="235" y="172" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink readout seq-read-6" opacity="0" fill="#1A1A1A">symbol = &quot;#&quot;</text>
+  <text x="235" y="200" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-0" fill="#1A1A1A">........................</text>
+  <text x="235" y="216" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-1" fill="#1A1A1A">::::::::::::::::::::::::</text>
+  <text x="235" y="232" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-2" fill="#1A1A1A">------------------------</text>
+  <text x="235" y="248" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-3" fill="#1A1A1A">========================</text>
+  <text x="235" y="264" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-4" fill="#1A1A1A">++++++++++++++++++++++++</text>
+  <text x="235" y="280" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-5" fill="#1A1A1A">************************</text>
+  <text x="235" y="296" text-anchor="middle" dominant-baseline="central" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" class="ink row seq-row-6" fill="#1A1A1A">########################</text>
+  <text x="235" y="322" text-anchor="middle" dominant-baseline="central" font-size="11" class="muted" fill="#6B6B6B">Add an item to the list and the loop runs one more time. You do not touch the loop.</text>
+</svg>
