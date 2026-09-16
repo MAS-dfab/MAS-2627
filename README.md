@@ -9,6 +9,12 @@ Here you'll find all the resources, code, and documentation you need for a succe
 - Share your ideas and code
 - Build something amazing together!
 
+### 🛠️ Before anything else: Installation Party
+
+Software to install, and how to get access to the course Drive with your ETH account:
+
+[**Installation Party — setup instructions**](00_Introductions/L00_InstallationParty/README.md)
+
 ### 🐍 First session: Hello Python
 
 Runs in the browser, nothing to install:
@@ -17,9 +23,9 @@ Runs in the browser, nothing to install:
 
 ## Repository Structure
 
-| Folder | Content |
-| --- | --- |
-| [00_Introductions](00_Introductions/) | Setup, installation party and first steps |
+| Folder | Content | Slides |
+| --- | --- | --- |
+| [00_Introductions](00_Introductions/) | Setup, installation party and first steps | [📽️](https://docs.google.com/presentation/d/1D687itmPKFhgjpCL57ErdS-rmV9tZwKLU76LgbYJBHk/edit?slide=id.g412bed22dd6_0_210#slide=id.g412bed22dd6_0_210) |
 
 Further module folders are added over the course of the year. Each module typically contains:
 - `*.gh` / `*.ghx` — Grasshopper definitions used in the tutorials
