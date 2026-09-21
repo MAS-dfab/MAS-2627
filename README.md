@@ -26,6 +26,7 @@ Runs in the browser, nothing to install:
 | Folder | Content | Slides |
 | --- | --- | --- |
 | [00_Introductions](00_Introductions/) | Setup, installation party and first steps | [📽️](https://docs.google.com/presentation/d/1D687itmPKFhgjpCL57ErdS-rmV9tZwKLU76LgbYJBHk/edit?slide=id.g412bed22dd6_0_210#slide=id.g412bed22dd6_0_210) |
+| [01_Computational_art](01_Computational_art/) | Computational design and generative art with Grasshopper + Python | [📽️](https://docs.google.com/presentation/d/1g4UShmmloULaF6YXluNLiY9CQKuUaZclU4vV7V2czdA/edit?slide=id.g3faaa01f2b4_0_76#slide=id.g3faaa01f2b4_0_76) |
 
 Further module folders are added over the course of the year. Each module typically contains:
 - `*.gh` / `*.ghx` — Grasshopper definitions used in the tutorials
