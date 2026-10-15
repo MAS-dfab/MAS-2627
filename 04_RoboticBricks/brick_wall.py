@@ -6,9 +6,10 @@ from compas.geometry import Box
 
 class Brick:
     # Class attribute for default brick dimensions
-    LENGTH = 32.0
-    WIDTH = 15.0
-    HEIGHT = 10.0
+    LENGTH = 32.00
+    WIDTH = 15.20
+    HEIGHT = 9.85
+    # Ensure that for a class that you want fixed dimensions, you can set them as class attributes.
 
     def __init__(self, frame=None):
         self.length = Brick.LENGTH
@@ -30,6 +31,7 @@ class Brick:
     def get_pick_frame(self):
         pick_frame = self.frame.copy()
         pick_frame.point.z += self.height / 2
+        # Safety check to ensure the pick frame is oriented correctly
         if pick_frame.zaxis.z > 0:
             pick_frame.xaxis = -pick_frame.xaxis
         return pick_frame
