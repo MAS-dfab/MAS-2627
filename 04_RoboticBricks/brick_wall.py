@@ -10,10 +10,10 @@ class Brick:
     WIDTH = 15.0
     HEIGHT = 10.0
 
-    def __init__(self, frame=None):
-        self.length = Brick.LENGTH
-        self.width = Brick.WIDTH
-        self.height = Brick.HEIGHT
+    def __init__(self, frame=None, length=None, width=None, height=None):
+        self.length = length if length is not None else Brick.LENGTH
+        self.width = width if width is not None else Brick.WIDTH
+        self.height = height if height is not None else Brick.HEIGHT
         self.frame = frame
 
     def __str__(self):
