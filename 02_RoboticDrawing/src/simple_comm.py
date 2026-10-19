@@ -30,40 +30,85 @@ def concatenate_script(list_ur_commands):
     ur_script += '\nmy_script()\n'
     return ur_script
 
-def send_script(script_to_send,robot_ip):
-    """
-    Opens a socket to the Robot and sends a script
+def send_script(script_to_send, robot_ip):
 
-    Args:
-        script_to_send: Script to send to socket
-        robot_id: Integer. ID of robot
-
-    """
-
-    '''Function that opens a socket connection to the robot'''
-    PORT = 30002
+    PORT = 30001
     HOST = robot_ip
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(2)
-    try:
-        s.connect((HOST, PORT))
-    except:
-        print ("Cannot connect to ",HOST,PORT)
-
-    s.settimeout(None)
-    max_size= 2<<18
-    n=len(script_to_send)
-    if n>max_size:
-        raise Exception("Program too long")
+    s = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_STREAM
+    )
 
     try:
-        s.send(script_to_send.encode('utf-8'))
-        print("script sent")
+
+        # ==========================================
+        # CONNECT
+        # ==========================================
+
+        s.settimeout(3.0)
+
+        s.connect(
+            (HOST, PORT)
+        )
+
+        print(
+            "Connected to robot:",
+            HOST,
+            PORT
+        )
+
+
+        # ==========================================
+        # PREPARE DATA
+        # ==========================================
+
+        data = script_to_send.encode("utf-8")
+
+        max_size = 2 << 18
+
+        if len(data) > max_size:
+            raise Exception(
+                "Program too long: "
+                + str(len(data))
+                + " bytes"
+            )
+
+
+        # ==========================================
+        # REMOVE TIMEOUT AFTER CONNECTION
+        # ==========================================
+
+        s.settimeout(None)
+
+
+        # ==========================================
+        # SEND COMPLETE SCRIPT
+        # ==========================================
+
+        s.sendall(data)
+
+        print(
+            "Complete script sent:",
+            len(data),
+            "bytes"
+        )
+
+
     except Exception as e:
-        print("failed to send:", e)
-    s.close()
 
+        print(
+            "Failed to send script:",
+            e
+        )
+
+        raise
+
+
+    finally:
+
+        s.close()
+        
 def listen_to_robot(robot_ip):
     PORT = 30003
     HOST = robot_ip
