@@ -55,6 +55,20 @@ class Brick:
                 return False
         return True
 
+    @staticmethod
+    def slack(f1, f2, size_x, size_y):
+        """Centre distance minus the touching distance along the line between centres.
+        0 = touching, > 0 = free space, < 0 = overlap."""
+        d = f2.point - f1.point
+        u = d.unitized()
+        best = None
+        for ax in (f1.xaxis, f1.yaxis, f2.xaxis, f2.yaxis):
+            c = abs(u.dot(ax))
+            if c > 1e-9:
+                reach = sum(size_x / 2 * abs(ax.dot(f.xaxis)) + size_y / 2 * abs(ax.dot(f.yaxis)) for f in (f1, f2))
+                best = reach / c if best is None else min(best, reach / c)
+        return d.length - best
+
     def clash_with(self, other, gap=0.0):
         return Brick.clash(self.frame, other.frame, self.length + gap, self.width + gap)
 
