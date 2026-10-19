@@ -45,6 +45,19 @@ class Brick:
         box.frame = self.frame.copy()
         return box
 
+    @staticmethod
+    def clash(f1, f2, size_x, size_y):
+        """True if two bricks (frames f1, f2; size_x x size_y each, in plan) overlap. Separating axis test."""
+        d = f2.point - f1.point
+        for ax in (f1.xaxis, f1.yaxis, f2.xaxis, f2.yaxis):
+            reach = sum(size_x / 2 * abs(ax.dot(f.xaxis)) + size_y / 2 * abs(ax.dot(f.yaxis)) for f in (f1, f2))
+            if abs(d.dot(ax)) >= reach:
+                return False
+        return True
+
+    def clash_with(self, other, gap=0.0):
+        return Brick.clash(self.frame, other.frame, self.length + gap, self.width + gap)
+
     def rotate(self, rotation_in_degrees):
         self.frame.rotate(math.radians(rotation_in_degrees), (0, 0, 1), self.frame.point)
 
