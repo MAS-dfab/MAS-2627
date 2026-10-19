@@ -17,6 +17,26 @@ class Brick:
         self.height = Brick.HEIGHT
         self.frame = frame
 
+    def configuration(self, config):
+        self.config = config
+        if self.config == 0:
+            self.length = Brick.LENGTH
+            self.width = Brick.WIDTH
+            self.height = Brick.HEIGHT
+        elif config == 1:
+            self.length = Brick.LENGTH
+            self.width = Brick.HEIGHT
+            self.height = Brick.WIDTH
+        elif self.config == 2:
+            self.length = Brick.WIDTH
+            self.width = Brick.HEIGHT
+            self.height = Brick.LENGTH
+        else:
+            raise ValueError("Invalid configuration value. Must be 0, 1, or 2.")
+
+    def get_config(self):
+        return self.config
+
     def __str__(self):
         return f"Brick of {self.length}mm x {self.width}mm x {self.height}mm (frame: {self.frame})"
 
