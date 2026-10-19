@@ -1,0 +1,36 @@
+
+import math
+from compas.geometry import Frame
+from compas.geometry import Box
+
+
+class Brick:
+    # Class attribute for default brick dimensions
+    LENGTH = 32.0
+    WIDTH = 15.0
+    HEIGHT = 10.0
+
+    def __init__(self, frame=None):
+        self.length = Brick.LENGTH
+        self.width = Brick.WIDTH
+        self.height = Brick.HEIGHT
+        self.frame = frame
+
+    def __str__(self):
+        return f"Brick of {self.length}mm x {self.width}mm x {self.height}mm (frame: {self.frame})"
+
+    def draw(self):
+        box = Box(self.length, self.width, self.height)
+        box.frame = self.frame.copy()
+        return box
+
+    def rotate(self, rotation_in_degrees):
+        self.frame.rotate(math.radians(rotation_in_degrees), (0, 0, 1), self.frame.point)
+
+    def get_pick_frame(self):
+        pick_frame = self.frame.copy()
+        pick_frame.point.z += self.height / 2
+        if pick_frame.zaxis.z > 0:
+            pick_frame.xaxis = -pick_frame.xaxis
+        return pick_frame
+
