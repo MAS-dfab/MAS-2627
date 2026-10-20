@@ -18,6 +18,8 @@ class Brick:
         self.frame = frame
 
     def configuration(self, config):
+        # This script enables us to flip dimensions so that we can reposition the brick in different orientations. 
+        # The config parameter determines how the dimensions are assigned.
         self.config = config
         if self.config == 0:
             self.length = Brick.LENGTH
@@ -46,27 +48,32 @@ class Brick:
         return box
 
     @staticmethod
+    # @staticmethod is a built-in decorator whereby method does not receive implicit first argument (i.e, self/cls)
+    # This means that the method can be called on the class itself, rather than on an instance of the class.
     def clash(f1, f2, size_x, size_y):
-        """True if two bricks (frames f1, f2; size_x x size_y each, in plan) overlap. Separating axis test."""
         d = f2.point - f1.point
+        # calculating distance between frame centers
         for ax in (f1.xaxis, f1.yaxis, f2.xaxis, f2.yaxis):
             reach = sum(size_x / 2 * abs(ax.dot(f.xaxis)) + size_y / 2 * abs(ax.dot(f.yaxis)) for f in (f1, f2))
+            # calculating projection of the distance vector onto the axis and comparing it to the reach
             if abs(d.dot(ax)) >= reach:
                 return False
         return True
 
     @staticmethod
     def slack(f1, f2, size_x, size_y):
-        """Centre distance minus the touching distance along the line between centres.
-        0 = touching, > 0 = free space, < 0 = overlap."""
         d = f2.point - f1.point
+        # calculating distance between frame centers
         u = d.unitized()
         best = None
         for ax in (f1.xaxis, f1.yaxis, f2.xaxis, f2.yaxis):
             c = abs(u.dot(ax))
+            # calculating projection of distance vector onto the axis
             if c > 1e-9:
                 reach = sum(size_x / 2 * abs(ax.dot(f.xaxis)) + size_y / 2 * abs(ax.dot(f.yaxis)) for f in (f1, f2))
+                # calculating reach along the axis of the frame
                 best = reach / c if best is None else min(best, reach / c)
+                # updating the best reach value if the current reach is smaller
         return d.length - best
 
     def clash_with(self, other, gap=0.0):
