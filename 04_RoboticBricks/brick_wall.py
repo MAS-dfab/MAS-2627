@@ -79,8 +79,8 @@ class Brick:
     def clash_with(self, other, gap=0.0):
         return Brick.clash(self.frame, other.frame, self.length + gap, self.width + gap)
 
-    def rotate(self, rotation_in_degrees):
-        self.frame.rotate(math.radians(rotation_in_degrees), (0, 0, 1), self.frame.point)
+    def rotate(self, rotation_in_degrees, axis):
+        self.frame.rotate(math.radians(rotation_in_degrees), axis, self.frame.point)
 
     def get_pick_frame(self):
         pick_frame = self.frame.copy()
