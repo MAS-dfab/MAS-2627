@@ -82,6 +82,7 @@ class Brick:
 
     def move(self, location):
         translate_vector = Vector.from_start_end(self.frame.point, location)
+        print(translate_vector)
         self.frame.point += translate_vector
 
     def rotate(self, rotation_in_degrees, axis):
