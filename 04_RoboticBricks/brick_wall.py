@@ -1,6 +1,7 @@
 
 import math
 from compas.geometry import Frame
+from compas.geometry import Vector
 from compas.geometry import Box
 
 
@@ -78,6 +79,10 @@ class Brick:
 
     def clash_with(self, other, gap=0.0):
         return Brick.clash(self.frame, other.frame, self.length + gap, self.width + gap)
+
+    def move(self, location):
+        translate_vector = Vector.from_start_end(self.frame.point, location)
+        self.frame.point += translate_vector
 
     def rotate(self, rotation_in_degrees, axis):
         self.frame.rotate(math.radians(rotation_in_degrees), axis, self.frame.point)
