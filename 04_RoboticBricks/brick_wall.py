@@ -82,11 +82,43 @@ class Brick:
 
     def move(self, location):
         translate_vector = Vector.from_start_end(self.frame.point, location)
-        print(translate_vector)
         self.frame.point += translate_vector
 
     def rotate(self, rotation_in_degrees, axis):
         self.frame.rotate(math.radians(rotation_in_degrees), axis, self.frame.point)
+
+    def copy(self):
+    # Ensure frame is duplicated so transformation doesn't affect the source frame
+        new_frame = self.frame.copy() if self.frame else None
+        new_brick = Brick(frame=new_frame)
+        
+        # Copy dimensions and configuration
+        new_brick.length = self.length
+        new_brick.width = self.width
+        new_brick.height = self.height
+        if hasattr(self, 'config'):
+            new_brick.config = self.config
+            
+        return new_brick
+
+    def face_diagonal(self, face="top"):
+        if face == "top":
+            return math.hypot(self.length, self.width)
+        elif face == "front":
+            return math.hypot(self.length, self.height)
+        elif face == "side":
+            return math.hypot(self.width, self.height)
+        else:
+            raise ValueError("Invalid face. Choose 'top', 'front', or 'side'.")
+
+    def diagonal_vector(self):
+        # 1. Scaling the local X, Y, Z axes of the frame by the brick dimensions
+        dx = self.frame.xaxis * self.length
+        dy = self.frame.yaxis * self.width
+        dz = self.frame.zaxis * self.height
+        
+        # 2. Summing vectors to get the main diagonal vector
+        return dx + dy + dz
 
     def get_pick_frame(self):
         pick_frame = self.frame.copy()
