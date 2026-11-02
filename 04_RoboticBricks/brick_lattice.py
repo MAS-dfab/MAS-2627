@@ -28,6 +28,8 @@ class Brick:
             else Frame.worldXY()
         )
 
+        self.pickup_axis = "Z"
+
     def __str__(self):
         return f"Brick of {self.length}mm x {self.width}mm x {self.height}mm (frame: {self.frame})"
 
@@ -61,11 +63,56 @@ class Brick:
         return self.frame.copy()
     
     def get_pick_frame(self):
+
         pick_frame = self.frame.copy()
-        pick_frame.point.z += self.height / 2
-        if pick_frame.zaxis.z > 0:
-            pick_frame.xaxis = -pick_frame.xaxis
+
+        # Select pickup direction and distance
+        if self.pickup_axis == "X":
+            pickup_direction = self.frame.xaxis
+            offset = self.length / 2.0
+
+        elif self.pickup_axis == "Y":
+            pickup_direction = self.frame.yaxis
+            offset = self.width / 2.0
+
+        elif self.pickup_axis == "Z":
+            pickup_direction = self.frame.zaxis
+            offset = self.height / 2.0
+
+        else:
+            raise ValueError("Invalid pickup axis")
+
+        # Move pickup origin to selected face
+        pick_frame.point += pickup_direction * offset
+
+        # Reorient frame so its local Z follows pickup direction
+        pick_frame = self.orient_pick_frame(
+            pick_frame,
+            self.pickup_axis
+        )
+
         return pick_frame
+
+    @staticmethod
+    def orient_pick_frame(frame, pickup_axis="Z"):
+
+        origin = frame.point
+
+        x = frame.xaxis
+        y = frame.yaxis
+        z = frame.zaxis
+
+        if pickup_axis == "Z":
+            return frame.copy()
+
+        elif pickup_axis == "X":
+            return Frame(origin, y, z)
+
+        elif pickup_axis == "Y":
+            return Frame(origin, z, x)
+
+        else:
+            raise ValueError("Invalid pickup axis")
 
     # ===================================================
     # PREDEFINED BRICK CONFIGURATIONS - CLASS METHODS
@@ -90,6 +137,9 @@ class Brick:
         brick = cls(frame)
         brick.rotate(90, "x")
         brick.rotate(180, "z", local = False)
+
+        brick.pickup_axis = "Y"
+
         return brick
 
     @classmethod
@@ -98,6 +148,9 @@ class Brick:
         brick = cls(frame)
         brick.rotate(90, "x")
         brick.rotate(90, "z", local = False)
+
+        brick.pickup_axis = "Y"
+    
         return brick
 
     @classmethod
