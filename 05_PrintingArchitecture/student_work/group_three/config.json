@@ -1,0 +1,10 @@
+{
+  "_note": "PLACEHOLDER: set robot_ip (e.g. 192.168.0.10) and measure the three work object points in robot base coordinates, in mm.",
+  "group": "group_three",
+  "robot_ip": "TODO",
+  "wobj": {
+    "origin": [0.0, 0.0, 0.0],
+    "xaxis": [100.0, 0.0, 0.0],
+    "xypoint": [0.0, 100.0, 0.0]
+  }
+}
