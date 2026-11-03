@@ -1,12 +1,11 @@
 import json
 import os
 import sys
+import compas_urc as urc
 
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
-
-import compas_urc as urc
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from print_class import PrintPath
@@ -17,7 +16,7 @@ from print_class import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_trial01.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
