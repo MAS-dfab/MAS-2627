@@ -23,7 +23,7 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 TOOL_FRAME = Frame(
-    [0.0, 0.0, 190.0], 
+    [-57.08, 44.54, 189.5], 
     [1, 0, 0], 
     [0, 1, 0]
     )
