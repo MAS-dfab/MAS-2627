@@ -22,7 +22,11 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame(
+    [0.0, 0.0, 190.0], 
+    [1, 0, 0], 
+    [0, 1, 0]
+    )
 # EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -55,12 +59,16 @@ def wobj_to_robot_base(printpath, wobj):
 
 
 def main():
+    
     config = load_config()
+    # Reads the configuration file of the workobject, defined by Frame(origin, xaxis, xypoint)
+    
     wobj = Frame.from_points(Point(*config["wobj"]["origin"]), Point(*config["wobj"]["xaxis"]), Point(*config["wobj"]["xypoint"]))
-
+    # Conversion of config file information into Compas.Geometry.Frame object
+    
     printpath = load_printpath()   # safety points are already in the JSON (added in design.ghx)
-
     # Transform from the workobject frame to the robot base frame, so the robot can move to the points
+    
     frames = wobj_to_robot_base(printpath, wobj)
     print(config["group"], printpath)
 
@@ -69,11 +77,16 @@ def main():
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
 
     import compas_urc as urc
+    # Imported here rather than at the top of this script
 
     ur = urc.URClient(config["robot_ip"])
+    # Reads robot IP address from config file
     ur.connect()
+    # Sets up a connection to the robot
+
     try:
         # TODO: ur.send(urc.SetTool(EXTRUDER))
+        ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
@@ -93,4 +106,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # This script is meant to be run from the command line, not from Rhino/Grasshopper
+    # If this is disabled, the script can be run from Rhino/Grasshoppper, but the robot will not be able to connect to the computer.
     main()
