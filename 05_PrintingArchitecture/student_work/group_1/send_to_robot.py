@@ -29,11 +29,12 @@ EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(6, True))   # wait a bit for the extruder to start before moving
+    ur.send(urc.SetDigital(6, True))
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(5, True))
-    ur.send(urc.SetDigital(6, False)) 
+    ur.send(urc.SetDigital(6, False))
+    
 
 
 def load_config():
@@ -85,8 +86,8 @@ def main():
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt:
-        ur.abort()   # TODO: pass digital_outputs to switch the extruder off
-        extruder_off(ur, urc)
+        ur.abort()  
+        extruder_off(ur, urc) 
         print("aborted")
 
 
