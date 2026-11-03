@@ -67,16 +67,24 @@ def main():
     points = printpath.printpoints
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
 
+    # --- PLACED INSIDE YOUR MAIN FUNCTION ---
     import compas_urc as urc
 
-    # 1. Initialize the client
-    ur = urc.URClient(config["robot_ip"], register_offset=0, frequency=125)
+    class URClientCB3(urc.URClient):
+        """Custom client subclass to patch old CB3 firmware limitations."""
+        def _configure_for_controller(self, version):
+            super(URClientCB3, self)._configure_for_controller(version)
+            # Hard-cap the batch sizing calculations to fit safely inside registers 0-23
+            self.batch_size = min(self.batch_size, (24 - self.register_offset) // 10)
+
+    # 1. Initialize your custom patched client
+    ur = URClientCB3(config["robot_ip"], register_offset=0, frequency=125)
     
-    # 2. FORCE OVERRIDE: Prevent the library from automatically switching back to 24
+    # 2. Strict override parameters
     ur.register_offset = 0
     ur.frequency = 125
 
-    # 3. Now connect safely
+    # 3. Connect safely over the network
     ur.connect()
 
 
@@ -96,9 +104,10 @@ def main():
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt:
-        ur.abort()  
-        extruder_off(ur, urc) 
-        print("aborted")
+        # Pass the digital output values directly inside the abort action.
+        # This forces outputs 5 to True and 6 to False instantly as it cuts off.
+        ur.abort(digital_outputs={5: True, 6: False})
+        print("aborted and extruder safely turned off")
 
 
 if __name__ == "__main__":
