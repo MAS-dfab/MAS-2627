@@ -55,14 +55,16 @@ def wobj_to_robot_base(printpath, wobj):
 
 
 def main():
+    
     config = load_config()
     # Reads the configuration file of the workobject, defined by Frame(origin, xaxis, xypoint)
+    
     wobj = Frame.from_points(Point(*config["wobj"]["origin"]), Point(*config["wobj"]["xaxis"]), Point(*config["wobj"]["xypoint"]))
     # Conversion of config file information into Compas.Geometry.Frame object
-
+    
     printpath = load_printpath()   # safety points are already in the JSON (added in design.ghx)
-
     # Transform from the workobject frame to the robot base frame, so the robot can move to the points
+    
     frames = wobj_to_robot_base(printpath, wobj)
     print(config["group"], printpath)
 
@@ -74,9 +76,13 @@ def main():
     # Imported here rather than at the top of this script
 
     ur = urc.URClient(config["robot_ip"])
+    # Reads robot IP address from config file
     ur.connect()
+    # Sets up a connection to the robot
+
     try:
         # TODO: ur.send(urc.SetTool(EXTRUDER))
+        ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
