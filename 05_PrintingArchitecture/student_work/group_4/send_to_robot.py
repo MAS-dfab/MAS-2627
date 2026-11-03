@@ -5,14 +5,9 @@ import sys
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
-<<<<<<< Updated upstream:05_PrintingArchitecture/student_work/group_4/send_to_robot.py
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
-=======
 import compas_urc as urc
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
->>>>>>> Stashed changes:05_PrintingArchitecture/student_work/group_four/send_to_robot.py
 from print_class import PrintPath
 
 # Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
@@ -28,17 +23,6 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-<<<<<<< Updated upstream:05_PrintingArchitecture/student_work/group_4/send_to_robot.py
-TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
-# EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
-
-# TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-def extruder_on(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
-
-def extruder_off(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
-=======
 TOOL_FRAME = Frame([-12.74, 44.73, 144.19], [1, 0, 0], [0, 1, 0]) # TCP
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
@@ -47,14 +31,13 @@ def extruder_on(ur):
     # 5---false
     # 6/7--- true
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(6, True))
+    ur.send(urc.SetDigital(7, True))
 
 def extruder_off(ur):
     # 5--- true
     # 6/7--- false
     ur.send(urc.SetDigital(5, True))
-    ur.send(urc.SetDigital(6, False))
->>>>>>> Stashed changes:05_PrintingArchitecture/student_work/group_four/send_to_robot.py
+    ur.send(urc.SetDigital(7, False))
 
 
 def load_config():
@@ -86,36 +69,24 @@ def main():
     points = printpath.printpoints
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
 
-<<<<<<< Updated upstream:05_PrintingArchitecture/student_work/group_4/send_to_robot.py
-    import compas_urc as urc
+    class URClientCB3(urc.URClient):
+    # PolyScope < 3.9 only has RTDE registers 0-23, compas_urc assumes 48
+        def _configure_for_controller(self, version):
+            super()._configure_for_controller(version)
+            self.batch_size = min(self.batch_size, (24 - self.register_offset) // 10)
 
-    ur = urc.URClient(config["robot_ip"])
-    ur.connect()
-    try:
-        # TODO: ur.send(urc.SetTool(EXTRUDER))
-=======
-    ur = urc.URClient(config["robot_ip"])
+    ur = URClientCB3(config["robot_ip"], register_offset=0, frequency=125)
+
+    # ur = urc.URClient(config["robot_ip"], register_offset=0, frequency=125)
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
->>>>>>> Stashed changes:05_PrintingArchitecture/student_work/group_four/send_to_robot.py
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
                 if extruding:
-<<<<<<< Updated upstream:05_PrintingArchitecture/student_work/group_4/send_to_robot.py
-                    extruder_on(ur, urc)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
-                else:
-                    extruder_off(ur, urc)
-        extruder_off(ur, urc)
-        ur.wait_all()
-        ur.close()
-    except KeyboardInterrupt:
-        ur.abort()   # TODO: pass digital_outputs to switch the extruder off
-=======
                     extruder_on(ur)
                     ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
                 else:
@@ -124,8 +95,7 @@ def main():
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt: # ctrl + C
-        ur.abort(digital_outputs={5: True, 6: False}) # TODO: pass digital_outputs to switch the extruder off
->>>>>>> Stashed changes:05_PrintingArchitecture/student_work/group_four/send_to_robot.py
+        ur.abort(digital_outputs={5: True, 7: False}) # TODO: pass digital_outputs to switch the extruder off
         print("aborted")
 
 
