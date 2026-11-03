@@ -15,7 +15,7 @@ from print_class import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_weijiun.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
@@ -27,9 +27,15 @@ TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
+    # ur.send(urc.SetDigital(1, False))
+    # ur.send(urc.SetDigital(2, True))
+    # ur.send(urc.SetDigital(3, True))
     pass  # ur.send(urc.SetDigital(?, ?))
 
 def extruder_off(ur, urc):
+    # ur.send(urc.SetDigital(1, True))
+    # ur.send(urc.SetDigital(2, False))
+    # ur.send(urc.SetDigital(3, False))
     pass  # ur.send(urc.SetDigital(?, ?))
 
 
@@ -81,9 +87,9 @@ def main():
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
-    except KeyboardInterrupt:
-        ur.abort()   # TODO: pass digital_outputs to switch the extruder off
-        print("aborted")
+    except (KeyboardInterrupt, Exception) as error:
+        ur.abort({1: True, 2: False, 3: False})   # stop the robot and switch the extruder off
+        print("aborted:", error)
 
 
 if __name__ == "__main__":
