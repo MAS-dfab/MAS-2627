@@ -6,6 +6,8 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
+import compas_urc as urc
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from print_class import PrintPath
 
@@ -27,6 +29,7 @@ TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
+    set_digital_out()
     pass  # ur.send(urc.SetDigital(?, ?))
 
 def extruder_off(ur, urc):
