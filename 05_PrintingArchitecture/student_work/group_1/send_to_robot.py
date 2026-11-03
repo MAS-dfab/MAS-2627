@@ -6,6 +6,7 @@ import compas_urc as urc
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
+from networkx import config
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from print_class import PrintPath
@@ -68,8 +69,17 @@ def main():
 
     import compas_urc as urc
 
-    ur = urc.URClient(config["robot_ip"])
+    # 1. Initialize the client
+    ur = urc.URClient(config["robot_ip"], register_offset=0, frequency=125)
+    
+    # 2. FORCE OVERRIDE: Prevent the library from automatically switching back to 24
+    ur.register_offset = 0
+    ur.frequency = 125
+
+    # 3. Now connect safely
     ur.connect()
+
+
     try:
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
