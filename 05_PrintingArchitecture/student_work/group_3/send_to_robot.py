@@ -2,6 +2,8 @@ import json
 import os
 import sys
 
+import compas_urc as urc  
+
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
@@ -22,7 +24,7 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([18.53, -36.93, 141.79], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame([17.21, -38.91, 141.87], [1, 0, 0], [0, 1, 0])
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -30,7 +32,7 @@ def extruder_on(ur, urc):
     # ur.send(urc.SetDigital(4, False))
     ur.send(urc.SetDigital(5, False))
     ur.send(urc.SetDigital(6, True))
-    ur.send(urc.SetDigital(7, True))
+    # ur.send(urc.SetDigital(7, True))
     
     # pass  # ur.send(urc.SetDigital(?, ?))
 
@@ -38,7 +40,7 @@ def extruder_off(ur, urc):
     # ur.send(urc.SetDigital(4, True))
     ur.send(urc.SetDigital(5, True))
     ur.send(urc.SetDigital(6, False))
-    ur.send(urc.SetDigital(7, False))
+    # ur.send(urc.SetDigital(7, False))
     # pass  # ur.send(urc.SetDigital(?, ?))
 
 
