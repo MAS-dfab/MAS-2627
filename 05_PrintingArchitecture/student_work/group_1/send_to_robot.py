@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import compas_urc as urc
 
 from compas.geometry import Frame
 from compas.geometry import Point
@@ -15,22 +16,24 @@ from print_class import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_trial01.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
-# EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
+TOOL_FRAME = Frame([-43.65, -49.2, 145.8], [1, 0, 0], [0, 1, 0])
+EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(5, False))
+    ur.send(urc.SetDigital(6, True))   # wait a bit for the extruder to start before moving
 
 def extruder_off(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(5, True))
+    ur.send(urc.SetDigital(6, False)) 
 
 
 def load_config():
@@ -67,7 +70,7 @@ def main():
     ur = urc.URClient(config["robot_ip"])
     ur.connect()
     try:
-        # TODO: ur.send(urc.SetTool(EXTRUDER))
+        ur.send(urc.SetTool(EXTRUDER))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
@@ -83,6 +86,7 @@ def main():
         ur.close()
     except KeyboardInterrupt:
         ur.abort()   # TODO: pass digital_outputs to switch the extruder off
+        extruder_off(ur, urc)
         print("aborted")
 
 
