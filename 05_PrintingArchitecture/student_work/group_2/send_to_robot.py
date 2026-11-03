@@ -31,16 +31,16 @@ TOOL_FRAME = Frame(
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
-    # ur.send(urc.SetDigital(1, False))
-    # ur.send(urc.SetDigital(2, True))
-    # ur.send(urc.SetDigital(3, True))
-    pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(1, False))
+    ur.send(urc.SetDigital(2, True))
+    ur.send(urc.SetDigital(3, True))
+    # pass  # ur.send(urc.SetDigital(?, ?))
 
 def extruder_off(ur, urc):
-    # ur.send(urc.SetDigital(1, True))
-    # ur.send(urc.SetDigital(2, False))
-    # ur.send(urc.SetDigital(3, False))
-    pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(1, True))
+    ur.send(urc.SetDigital(2, False))
+    ur.send(urc.SetDigital(3, False))
+    # pass  # ur.send(urc.SetDigital(?, ?))
 
 
 def load_config():
