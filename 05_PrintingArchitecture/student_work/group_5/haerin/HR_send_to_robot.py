@@ -6,7 +6,12 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+sys.path.insert(
+    0,
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "..", "src")
+    )
+)
 from print_class import PrintPath
 
 # Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
@@ -23,7 +28,7 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 TOOL_FRAME = Frame([-4.54, -42.11, 148.48], [1, 0, 0], [0, 1, 0])
-# EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
+EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
@@ -74,9 +79,7 @@ def main():
 
     import compas_urc as urc
 
-    EXTRUDER = urc.Tool(TOOL_FRAME, name="extruder")
-
-    ur = urc.URClient(config["robot_ip"])
+        ur = urc.URClient(config["robot_ip"])
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
