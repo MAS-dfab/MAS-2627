@@ -159,7 +159,7 @@ def set_tcp_by_angles(x_offset, y_offset, z_offset, x_rotate, y_rotate, z_rotate
     _rX = cg.Rotation.from_axis_and_angle([1, 0, 0], x_rotate)
     _rY = cg.Rotation.from_axis_and_angle([0, 1, 0], y_rotate)
     _rZ = cg.Rotation.from_axis_and_angle([0, 0, 1], z_rotate)
-    _r = _rX * _rY * _rZ
+    _r = _rZ * _rY * _rX
     _axis_angle = utils.matrix_to_axis_angle(_r)
 
     # Create pose data
