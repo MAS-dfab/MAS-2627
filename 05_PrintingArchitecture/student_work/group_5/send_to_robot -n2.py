@@ -101,7 +101,7 @@ def main():
     except KeyboardInterrupt:  # ctrl c - cancel/intterupt 
         ur.abort()   # TODO: pass digital_outputs to switch the extruder off
         print("aborted")
-        # extruder_off(ur, urc)
+        extruder_off(ur, urc)
 
 
 if __name__ == "__main__":
