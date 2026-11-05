@@ -18,8 +18,10 @@ HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
-ACCEL = 100.0       # mm/s2
+
+ACCEL = 1000      # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+ASPEED = 6          # Extrusion Speed
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -31,13 +33,13 @@ def extruder_on(ur):
     # 5---false
     # 6/7--- true
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(7, True))
+    ur.send(urc.SetDigital(ASPEED, True))
 
 def extruder_off(ur):
     # 5--- true
     # 6/7--- false
     ur.send(urc.SetDigital(5, True))
-    ur.send(urc.SetDigital(7, False))
+    ur.send(urc.SetDigital(ASPEED, False))
 
 
 def load_config():
@@ -69,15 +71,15 @@ def main():
     points = printpath.printpoints
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
 
-    class URClientCB3(urc.URClient):
-    # PolyScope < 3.9 only has RTDE registers 0-23, compas_urc assumes 48
-        def _configure_for_controller(self, version):
-            super()._configure_for_controller(version)
-            self.batch_size = min(self.batch_size, (24 - self.register_offset) // 10)
+    # class URClientCB3(urc.URClient):
+    # # PolyScope < 3.9 only has RTDE registers 0-23, compas_urc assumes 48
+    #     def _configure_for_controller(self, version):
+    #         super()._configure_for_controller(version)
+    #         self.batch_size = min(self.batch_size, (24 - self.register_offset) // 10)
 
-    ur = URClientCB3(config["robot_ip"], register_offset=0, frequency=125)
+    # ur = URClientCB3(config["robot_ip"], register_offset=0, frequency=125)
 
-    # ur = urc.URClient(config["robot_ip"], register_offset=0, frequency=125)
+    ur = urc.URClient(config["robot_ip"])
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
@@ -95,7 +97,7 @@ def main():
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt: # ctrl + C
-        ur.abort(digital_outputs={5: True, 7: False}) # TODO: pass digital_outputs to switch the extruder off
+        ur.abort(digital_outputs={5: True, ASPEED: False}) # TODO: pass digital_outputs to switch the extruder off
         print("aborted")
 
 
