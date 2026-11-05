@@ -77,16 +77,19 @@ def main():
     try:
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
+
+        extruder_off(ur, urc)
+
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
 
-            if i % 2 ==0:
+            # Set speed IOs (6 and 7) based on index parity
+            if i % 2 == 0:
                 ur.send(urc.SetDigital(6, True))
                 ur.send(urc.SetDigital(7, False))
             else:
                 ur.send(urc.SetDigital(6, False))
                 ur.send(urc.SetDigital(7, True))
-                
 
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
@@ -95,6 +98,7 @@ def main():
                     ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
                 else:
                     extruder_off(ur, urc)
+
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
