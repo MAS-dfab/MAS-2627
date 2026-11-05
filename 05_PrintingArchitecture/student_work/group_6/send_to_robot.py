@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import compas_urc as urc
 
 from compas.geometry import Frame
 from compas.geometry import Point
@@ -18,31 +19,41 @@ CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
 ACCEL = 100.0       # mm/s2
-START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
-
+START_PAUSE = 2.5   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+                    # 압출을 시작하고 로봇이 이동하기 전 1초 대기
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([0.0, 0.0, 190.0], [1, 0, 0], [0, 1, 0])
-# EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
+TOOL_FRAME = Frame([14.13, -47.86, 151.12], [1, 0, 0], [0, 1, 0]) #첫번째께 tcp position, 두번째가 x축 Orientation, 세번째가 y축 Orientation
+EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-def extruder_on(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
+def extruder_on(ur, urc): #압출기를 켜는 함수
+    ur.send(urc.SetDigital(3, True))
+    ur.send(urc.SetDigital(1, False))
+    ur.send(urc.SetDigital(2, False))  # 압출기 켜기
+    # 1--- false 모터 정지
+    # 2/3 --- true 설정된 압출 속도 선택
+    # pass  # ur.send(urc.SetDigital(?, ?))
 
-def extruder_off(ur, urc):
-    pass  # ur.send(urc.SetDigital(?, ?))
+def extruder_off(ur, urc): 
+    ur.send(urc.SetDigital(2, False))
+    ur.send(urc.SetDigital(3, False))
+    ur.send(urc.SetDigital(1, True))
+    # 1--- true
+    # 2/3 --- false
+    # pass  # ur.send(urc.SetDigital(?, ?))
 
 
 def load_config():
-    with open(CONFIG_FILE, "r") as f:
+    with open(CONFIG_FILE, "r", encoding="utf-8-sig") as f:
         return json.load(f)
 
 def load_printpath():
-    with open(PRINT_FILE, "r") as f:
+    with open(PRINT_FILE, "r", encoding="utf-8-sig") as f:
         return PrintPath.from_dict(json.load(f))
 
 
-def wobj_to_robot_base(printpath, wobj):
+def wobj_to_robot_base(printpath, wobj): # 좌표변환 
     # same idea as rhino_to_robotbase in 04_RoboticBricks
     transformation = Transformation.from_frame_to_frame(Frame.worldXY(), wobj)
     return [printpoint.frame.transformed(transformation) for printpoint in printpath.printpoints]
@@ -62,12 +73,13 @@ def main():
     points = printpath.printpoints
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
 
-    import compas_urc as urc
 
-    ur = urc.URClient(config["robot_ip"])
+
+
+    ur = urc.URClient(config["robot_ip"]) # 실제 로봇 움직이는 부분 ip 주소 바꾸기
     ur.connect()
     try:
-        # TODO: ur.send(urc.SetTool(EXTRUDER))
+        ur.send(urc.SetTool(EXTRUDER))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
@@ -82,7 +94,11 @@ def main():
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt:
-        ur.abort()   # TODO: pass digital_outputs to switch the extruder off
+        ur.abort(digital_outputs={
+            1: True,    # DO1: 압출 모터 정지
+            2: False,   # DO2: 압출 속도 1 해제
+            3: False    # DO3: 압출 속도 2 해제
+        })
         print("aborted")
 
 
