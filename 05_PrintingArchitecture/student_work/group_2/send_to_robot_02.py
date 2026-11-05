@@ -15,7 +15,7 @@ from print_class_02 import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_2.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
@@ -82,6 +82,7 @@ def main():
     # a segment prints only if both of its printpoints have the extruder on
     points = printpath.printpoints
     extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
+    extrusion_same = [points[i].extruder_index == points[i + 1].extruder_index for i in range(len(points) - 1)] + [False]
 
     import compas_urc as urc
     # Imported here rather than at the top of this script
@@ -104,6 +105,14 @@ def main():
                     ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
                 else:
                     extruder_off(ur, urc)
+            elif extrusion_same[i] != extrusion_same[i + 1] and i < len(points) - 1:   # the robot switches the IO between the moves
+                if points[i+1].extruder_index == 1: 
+                    extruder_off(ur, urc)
+                elif points[i+1].extruder_index == 2:
+                    extruder_on_0(ur, urc)
+                elif points[i+1].extruder_index == 3:
+                    extruder_on_1(ur, urc)
+                    
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
