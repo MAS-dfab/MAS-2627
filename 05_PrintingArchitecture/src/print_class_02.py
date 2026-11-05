@@ -15,18 +15,19 @@ class PrintPoint:
             blend_radius: float, mm, 0 = stop exactly at the point
             is_extruder_on: bool, True while printing, False when travelling
     """
-    def __init__(self, frame, layer_index=0, speed=10.0, blend_radius=0.0, is_extruder_on=True):
+    def __init__(self, frame, layer_index=0, speed=10.0, blend_radius=0.0, is_extruder_on=True, extruder_index = 1):
         self.frame = frame                    # position + orientation of the tool
         self.layer_index = layer_index        # which layer this point belongs to
         self.speed = speed                    # robot speed in mm/s NOT the extrusion speed
         self.blend_radius = blend_radius      # mm, 0 = stop exactly at the point
         self.is_extruder_on = is_extruder_on  # True while printing, False when travelling
+        self.extruder_index = extruder_index  # index of the extruder to use (default is 1, same as the extruder_off function)
 
     def __str__(self):
-        return f"PrintPoint (layer: {self.layer_index}, speed: {self.speed}, extruder on: {self.is_extruder_on}, frame: {self.frame})"
+        return f"PrintPoint (layer: {self.layer_index}, speed: {self.speed}, extruder on: {self.is_extruder_on}, frame: {self.frame}, extruder index: {self.extruder_index})"
 
     def copy(self):
-        return PrintPoint(self.frame.copy(), self.layer_index, self.speed, self.blend_radius, self.is_extruder_on)
+        return PrintPoint(self.frame.copy(), self.layer_index, self.speed, self.blend_radius, self.is_extruder_on, self.extruder_index)
     
     def to_dict(self):
         return {
@@ -35,6 +36,7 @@ class PrintPoint:
             "speed": self.speed,
             "blend_radius": self.blend_radius,
             "is_extruder_on": self.is_extruder_on,
+            "extruder_index": self.extruder_index
         }
 
     @classmethod
@@ -42,7 +44,7 @@ class PrintPoint:
     def from_dict(cls, data):
         point, xaxis, yaxis = data["frame"]
         frame = Frame(Point(*point), Vector(*xaxis), Vector(*yaxis))
-        return cls(frame, data["layer_index"], data["speed"], data["blend_radius"], data["is_extruder_on"])
+        return cls(frame, data["layer_index"], data["speed"], data["blend_radius"], data["is_extruder_on"], data["extruder_index"])
 
 
 class PrintPath:
