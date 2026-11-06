@@ -33,13 +33,13 @@ EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 def extruder_on(ur, urc):
     # add io
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(6, True))
+    ur.send(urc.SetDigital(7, True))
     
 
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(5, True))
-    ur.send(urc.SetDigital(6, False))
+    ur.send(urc.SetDigital(7, False))
 
 
 
