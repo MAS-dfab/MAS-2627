@@ -6,6 +6,8 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
+import compas_urc as urc
+
 sys.path.insert(
     0,
     os.path.abspath(
@@ -79,7 +81,7 @@ def main():
 
     import compas_urc as urc
 
-        ur = urc.URClient(config["robot_ip"])
+    ur = urc.URClient(config["robot_ip"])
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
