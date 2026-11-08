@@ -6,7 +6,7 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from print_class_02 import PrintPath
 
 # Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
@@ -18,7 +18,8 @@ CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_2.json")
 
 ACCEL = 100.0       # mm/s2
-START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+# START_PAUSE = 1.0 (original pause value)
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -27,28 +28,24 @@ TOOL_FRAME = Frame(
     [1, 0, 0], 
     [0, 1, 0]
     )
-# EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
+EXTRUDER_STATES = {
+    1: (True,  False, False),   # off
+    2: (False, True,  False),   # extruder / speed channel 0
+    3: (False, False, True),    # extruder / speed channel 1
+}
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-def extruder_on_0(ur, urc):
-    ur.send(urc.SetDigital(1, False))
-    ur.send(urc.SetDigital(2, True))
-    ur.send(urc.SetDigital(3, False))
-
-def extruder_on_1(ur, urc):
-    ur.send(urc.SetDigital(1, False))
-    ur.send(urc.SetDigital(2, False))
-    ur.send(urc.SetDigital(3, True))
-
-def extruder_off(ur, urc):
+def set_extruder(ur, urc, index):
+    d1, d2, d3 = EXTRUDER_STATES[index]
+    # go through "off" first: never passes through the retract code (DO2+DO3),
+    # and lets firmware that only reads the speed on switch-on pick up the change
     ur.send(urc.SetDigital(1, True))
     ur.send(urc.SetDigital(2, False))
     ur.send(urc.SetDigital(3, False))
-
-def retract(ur, urc):
-    ur.send(urc.SetDigital(1, False))
-    ur.send(urc.SetDigital(2, True))
-    ur.send(urc.SetDigital(3, True))
+    if index != 1:
+        ur.send(urc.SetDigital(2, d2))
+        ur.send(urc.SetDigital(3, d3))
+        ur.send(urc.SetDigital(1, d1))
 
 def load_config():
     with open(CONFIG_FILE, "r") as f:
@@ -95,29 +92,16 @@ def main():
         # TODO: ur.send(urc.SetTool(EXTRUDER))
         ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
         extruding = False
+        current = None
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
-            if extruding_after[i] != extruding:   # the robot switches the IO between the moves
-                extruding = extruding_after[i]
-                if extruding:
-                    if printpoint.extruder_index == 1:
-                        extruder_off(ur, urc)
-                    elif printpoint.extruder_index == 2:
-                        extruder_on_0(ur, urc)
-                    elif printpoint.extruder_index == 3:
-                        extruder_on_1(ur, urc)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
-                else:
-                    extruder_off(ur, urc)     
-            elif extruding:  
-                if printpoint.extruder_index == 1:
-                    extruder_off(ur, urc)
-                elif printpoint.extruder_index == 2:
-                    extruder_on_0(ur, urc)
-                elif printpoint.extruder_index == 3:
-                    extruder_on_1(ur, urc)
-            # ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits              
-        extruder_off(ur, urc)
+            wanted = printpoint.extruder_index if extruding_after[i] else 1
+            if wanted != current:
+                set_extruder(ur, urc, wanted)
+                if current in (None, 1) and wanted != 1:
+                    ur.send(urc.WaitTime(START_PAUSE))   # let material start flowing
+                current = wanted
+        set_extruder(ur, urc, 1)
         ur.wait_all()
         ur.close()
     except (KeyboardInterrupt, Exception) as error:

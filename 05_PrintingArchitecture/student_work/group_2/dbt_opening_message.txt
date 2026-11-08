@@ -1,0 +1,29 @@
+            hNNN-sNNN+            sMMMy           
+            dMMM:yMMM+            sMMMy           
+            dMMM:yMMM+            sMMMy           
+   `-/osso+-dMMM:yMMMs:+ssssssssssmMMMmsss        
+ `odMMMMMMMMMMMM:yMMMMMMMMMMMMMMNNMMMMMNNN`       
+.mMMMds++sdMMMMM:yMMMMNy+/+yNMMMd-yMMMh...        
+dMMMo`    `yMMMM:yMMMN-     -NMMM+sMMMy           
+mMMM:      +MMMM-sMMMm`     `mMMMssMMMh      `hhhy
+/MMMNo-..:sNMMMh .NMMMd+-.-+dMMMN..NMMMh/-.-+mMMMo
+ /mMMMMNNMMMMNs`  .hMMMMNNNMMMMh-  .yMMMMNNNMMMm/ 
+   :sdNNMNmy/`      -ohmNMMmho-      .+ydmmdho-   
+                                                  
+                                                  
+dbt-mini-shield firmware 1.2.23 by Oliver Harley, Andrea Perissinotto
+
+Firmware for: Mini Extruder (UR5).
+
+===================================
+============ Commands =============
+==Low level Arduino Pin control==
+mode <pin> <mode>: pinMode()
+read <pin>: digitalRead()
+aread <pin>: analogRead()
+write <pin> <value>: digitalWrite()
+awrite <pin> <value>: analogWrite()
+out <outputchannel> <on/off>: 0-N_OUTCHANNELS_-1    /   0/1
+
+==Temperature Control==
+heater <number> <value>: 0/1 on/off   /   0-250C
