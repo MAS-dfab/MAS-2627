@@ -33,13 +33,13 @@ TOOL_FRAME = Frame(
 def extruder_on(ur, urc):
     ur.send(urc.SetDigital(1, False))
     ur.send(urc.SetDigital(2, True))
-    ur.send(urc.SetDigital(3, True))
+    # ur.send(urc.SetDigital(3, True))
     # pass  # ur.send(urc.SetDigital(?, ?))
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(1, True))
     ur.send(urc.SetDigital(2, False))
-    ur.send(urc.SetDigital(3, False))
+    # ur.send(urc.SetDigital(3, False))
     # pass  # ur.send(urc.SetDigital(?, ?))
 
 
@@ -98,11 +98,17 @@ def main():
                 else:
                     extruder_off(ur, urc)
         extruder_off(ur, urc)
-        ur.wait_all()
+        # wait in short steps: on Windows a wait without timeout ignores Ctrl+C
+        while True:
+            try:
+                ur.wait_all(timeout=0.5)
+                break
+            except urc.TimeoutException:
+                pass
         ur.close()
     except (KeyboardInterrupt, Exception) as error:
         ur.abort({1: True, 2: False, 3: False})   # stop the robot and switch the extruder off
-        print("aborted:", error)
+        print("aborted:", error) 
 
 
 if __name__ == "__main__":
