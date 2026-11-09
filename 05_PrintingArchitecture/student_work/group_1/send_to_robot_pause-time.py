@@ -1,0 +1,135 @@
+import json
+import os
+import sys
+import compas_urc as urc
+
+from compas.geometry import Frame
+from compas.geometry import Point
+from compas.geometry import Transformation
+from networkx import config
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+from print_class import PrintPath
+
+# Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
+# https://github.com/MAS-dfab/compas_urc  (pip install git+https://github.com/MAS-dfab/compas_urc.git)
+# Units: mm, mm/s
+
+HERE = os.path.dirname(__file__)
+CONFIG_FILE = os.path.join(HERE, "config.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_trial02.json")
+
+ACCEL = 100.0       # mm/s2
+START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+ACCEL = 100.0       # mm/s2
+START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+POINT_PAUSE = 3.5   # <-- ADD THIS LINE
+
+
+# TODO: the tool (extruder) as a frame relative to the flange, in mm
+# TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
+TOOL_FRAME = Frame([-43.65, -49.2, 145.8], [1, 0, 0], [0, 1, 0])
+EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
+
+# TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
+def extruder_on(ur, urc):
+    ur.send(urc.SetDigital(5, False))
+    ur.send(urc.SetDigital(6, True))
+
+def extruder_off(ur, urc):
+    ur.send(urc.SetDigital(5, True))
+    ur.send(urc.SetDigital(6, False))
+    
+
+
+def load_config():
+    with open(CONFIG_FILE, "r") as f:
+        return json.load(f)
+
+def load_printpath():
+    with open(PRINT_FILE, "r") as f:
+        return PrintPath.from_dict(json.load(f))
+
+
+def wobj_to_robot_base(printpath, wobj):
+    # same idea as rhino_to_robotbase in 04_RoboticBricks
+    transformation = Transformation.from_frame_to_frame(Frame.worldXY(), wobj)
+    return [printpoint.frame.transformed(transformation) for printpoint in printpath.printpoints]
+
+
+def main():
+    config = load_config()
+    wobj = Frame.from_points(Point(*config["wobj"]["origin"]), Point(*config["wobj"]["xaxis"]), Point(*config["wobj"]["xypoint"]))
+
+    printpath = load_printpath()   # safety points are already in the JSON (added in design.ghx)
+
+    # Transform from the workobject frame to the robot base frame, so the robot can move to the points
+    frames = wobj_to_robot_base(printpath, wobj)
+    print(config["group"], printpath)
+
+    # a segment prints only if both of its printpoints have the extruder on
+    points = printpath.printpoints
+    extruding_after = [points[i].is_extruder_on and points[i + 1].is_extruder_on for i in range(len(points) - 1)] + [False]
+
+    # --- PLACED INSIDE YOUR MAIN FUNCTION ---
+    import compas_urc as urc
+
+    class URClientCB3(urc.URClient):
+        """Custom client subclass to patch old CB3 firmware limitations."""
+        def _configure_for_controller(self, version):
+            super(URClientCB3, self)._configure_for_controller(version)
+            # Hard-cap the batch sizing calculations to fit safely inside registers 0-23
+            self.batch_size = min(self.batch_size, (24 - self.register_offset) // 10)
+
+    # 1. Initialize your custom patched client
+    ur = URClientCB3(config["robot_ip"], register_offset=0, frequency=125)
+    
+    # 2. Strict override parameters
+    ur.register_offset = 0
+    ur.frequency = 125
+
+    # 3. Connect safely over the network
+    ur.connect()
+
+
+    try:
+        ur.send(urc.SetTool(EXTRUDER))
+        extruding = False
+
+        for i, (printpoint, frame) in enumerate(zip(points, frames)):
+            # Set blend to 0 on every print point so the robot stops at the exact coordinate
+            should_pause = printpoint.is_extruder_on
+            blend = 0 if should_pause else printpoint.blend_radius
+
+            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, blend, urc.Motion.LINEAR))
+
+            if extruding_after[i] != extruding:  # Robot switches the IO between moves
+                extruding = extruding_after[i]
+                if extruding:
+                    extruder_on(ur, urc)
+                    ur.send(urc.WaitTime(START_PAUSE))
+                else:
+                    extruder_off(ur, urc)
+
+            # Pause on every print point and stop the extruder during the wait
+            if should_pause:
+                if extruding:
+                    extruder_off(ur, urc)
+                ur.send(urc.WaitTime(POINT_PAUSE))
+                if extruding:
+                    extruder_on(ur, urc)
+
+        extruder_off(ur, urc)
+        ur.wait_all()
+        ur.close()
+
+
+    except KeyboardInterrupt:
+        # Pass the digital output values directly inside the abort action.
+        # This forces outputs 5 to True and 6 to False instantly as it cuts off.
+        ur.abort(digital_outputs={5: True, 6: False})
+        print("aborted and extruder safely turned off")
+
+
+if __name__ == "__main__":
+    main()
