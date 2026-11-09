@@ -1,8 +1,11 @@
+# region ---IMPORTS---
 from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Vector
 
+# endregion
 
+# region ----FUNCTIONS---
 # PrintPoint (one target for the robot) and PrintPath (an ordered list of printpoints)
 # Units: mm for positions, mm/s for speed
 
@@ -90,3 +93,5 @@ class PrintPath:
     @classmethod
     def from_dict(cls, data):
         return cls([PrintPoint.from_dict(item) for item in data["printpoints"]])
+
+# endregion

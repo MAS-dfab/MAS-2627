@@ -19,7 +19,7 @@ from print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_odd-even.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
 # endregion
 
