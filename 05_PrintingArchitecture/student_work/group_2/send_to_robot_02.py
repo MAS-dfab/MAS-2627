@@ -15,7 +15,7 @@ from print_class_02 import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_2.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_3.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
@@ -94,7 +94,7 @@ def main():
         extruding = False
         current = None
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
             wanted = printpoint.extruder_index if extruding_after[i] else 1
             if wanted != current:
                 set_extruder(ur, urc, wanted)
