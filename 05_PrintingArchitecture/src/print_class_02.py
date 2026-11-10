@@ -44,7 +44,12 @@ class PrintPoint:
     def from_dict(cls, data):
         point, xaxis, yaxis = data["frame"]
         frame = Frame(Point(*point), Vector(*xaxis), Vector(*yaxis))
-        return cls(frame, data["layer_index"], data["speed"], data["blend_radius"], data["is_extruder_on"], data["extruder_index"])
+        speed = data["speed"]
+        if isinstance(speed, (list, tuple)):
+            speed = max(float(value) for value in speed)
+        else:
+            speed = float(speed)
+        return cls(frame, data["layer_index"], speed, data["blend_radius"], data["is_extruder_on"], data["extruder_index"])
 
 
 class PrintPath:
