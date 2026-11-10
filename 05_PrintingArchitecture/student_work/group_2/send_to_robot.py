@@ -1,4 +1,6 @@
+import bisect
 import json
+import math
 import os
 import sys
 
@@ -58,6 +60,21 @@ def wobj_to_robot_base(printpath, wobj):
     return [printpoint.frame.transformed(transformation) for printpoint in printpath.printpoints]
 
 
+def show_progress(ur, move_ids, points, frames, width=30):
+    """One line in the terminal: bar, %, point, layer, time left (from path length / speed)."""
+    reached = bisect.bisect_right(move_ids, ur.executed)   # printpoints the robot has reached
+    i = max(reached - 1, 0)
+    # time for each segment = length / speed of the point it moves to
+    seconds = [math.dist(frames[k].point, frames[k + 1].point) / points[k + 1].speed for k in range(len(frames) - 1)]
+    done, total = sum(seconds[:i]), sum(seconds)
+    fraction = done / total if total else 1.0
+    left = int(total - done)
+    bar = "#" * int(width * fraction) + "-" * (width - int(width * fraction))
+    print(f"\r[{bar}] {fraction * 100:5.1f}%  point {reached}/{len(points)}  "
+          f"layer {points[i].layer_index + 1}/{points[-1].layer_index + 1}  left {left // 60:02d}:{left % 60:02d}",
+          end="", flush=True)
+
+
 def main():
     
     config = load_config()
@@ -79,7 +96,7 @@ def main():
     import compas_urc as urc
     # Imported here rather than at the top of this script
 
-    ur = urc.URClient(config["robot_ip"])
+    ur = urc.URClient(config["robot_ip"], frequency=50)   # 50 Hz instead of 125: the PC keeps up, the controller does not drop RTDE
     # Reads robot IP address from config file
     ur.connect()
     # Sets up a connection to the robot
@@ -88,8 +105,10 @@ def main():
         # TODO: ur.send(urc.SetTool(EXTRUDER))
         ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
         extruding = False
+        move_ids = []   # sequence id of the move to each printpoint, for the progress bar
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+            future = ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
+            move_ids.append(future.instruction.sequence_id)
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
                 if extruding:
@@ -99,12 +118,15 @@ def main():
                     extruder_off(ur, urc)
         extruder_off(ur, urc)
         # wait in short steps: on Windows a wait without timeout ignores Ctrl+C
+        # every step also redraws the progress bar
         while True:
             try:
                 ur.wait_all(timeout=0.5)
                 break
             except urc.TimeoutException:
-                pass
+                show_progress(ur, move_ids, points, frames)
+        show_progress(ur, move_ids, points, frames)
+        print()
         ur.close()
     except (KeyboardInterrupt, Exception) as error:
         ur.abort({1: True, 2: False, 3: False})   # stop the robot and switch the extruder off
