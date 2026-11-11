@@ -19,13 +19,13 @@ from print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_trele.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
 # endregion
 
 # region --- PARAMETERS ---
 ACCEL = 1000        # mm/s2
-START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+START_PAUSE = 0.5   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 ASPEED = 6          # Extrusion Speed
 
 TOOL_FRAME = Frame([-12.74, 44.73, 144.19], [1, 0, 0], [0, 1, 0]) # TCP
