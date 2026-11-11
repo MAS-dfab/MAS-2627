@@ -32,17 +32,17 @@ TOOL_FRAME = Frame(
 # EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
+# wiring on this robot (tested 2026-11-11): DO0 heater off (never used here), DO1 extruder stop,
+# DO2 -> aspeed 1, DO3 -> aspeed 0, DO2+DO3 = retract
 def extruder_on(ur, urc):
+    ur.send(urc.SetDigital(3, False))   # DO3 off first: DO2 + DO3 together would retract
     ur.send(urc.SetDigital(1, False))
-    ur.send(urc.SetDigital(2, True))
-    # ur.send(urc.SetDigital(3, True))
-    # pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(2, True))    # DO2 = aspeed 1 on this robot
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(1, True))
     ur.send(urc.SetDigital(2, False))
-    # ur.send(urc.SetDigital(3, False))
-    # pass  # ur.send(urc.SetDigital(?, ?))
+    ur.send(urc.SetDigital(3, False))
 
 
 def load_config():
@@ -104,6 +104,7 @@ def main():
     try:
         # TODO: ur.send(urc.SetTool(EXTRUDER))
         ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
+        extruder_off(ur, urc)   # outputs may still be on from a manual test on the pendant
         extruding = False
         move_ids = []   # sequence id of the move to each printpoint, for the progress bar
         for i, (printpoint, frame) in enumerate(zip(points, frames)):

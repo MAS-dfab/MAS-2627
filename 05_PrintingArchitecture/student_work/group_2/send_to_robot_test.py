@@ -15,7 +15,7 @@ from print_class_02 import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_3.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_weijiun.json")   # = the save panel in design_weijiun.gh
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
@@ -28,10 +28,13 @@ TOOL_FRAME = Frame(
     [1, 0, 0], 
     [0, 1, 0]
     )
+# wiring on this robot (tested on the pendant, 2026-11-11): DO0 heater off (never used here), DO1 extruder stop,
+# DO2 -> aspeed 1, DO3 -> aspeed 0 (the other way round than the L02 slides), DO2+DO3 = retract
+# extruder_index -> (DO1, DO2, DO3). The speeds themselves are set in the Arduino IDE: aspeed 0 7, aspeed 1 1
 EXTRUDER_STATES = {
     1: (True,  False, False),   # off
-    2: (False, True,  False),   # extruder / speed channel 0
-    3: (False, False, True),    # extruder / speed channel 1
+    2: (False, True,  False),   # DO2 = aspeed 1 (1 mm/s): class 2, the thin lines
+    3: (False, False, True),    # DO3 = aspeed 0 (7 mm/s): class 3, the main body
 }
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -91,18 +94,27 @@ def main():
     try:
         # TODO: ur.send(urc.SetTool(EXTRUDER))
         ur.send(urc.SetTool(urc.Tool(TOOL_FRAME, name = "extruder")))
-        extruding = False
-        current = None
+        # extruder off before the first move: the outputs may still be on from a manual test on the pendant
+        set_extruder(ur, urc, 1)
+        current = 1
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
-            wanted = printpoint.extruder_index if extruding_after[i] else 1
+            # the next segment (point i -> i+1) uses the extruder speed of the point it moves to,
+            # the same point whose robot speed it uses
+            wanted = points[i + 1].extruder_index if extruding_after[i] else 1
             if wanted != current:
                 set_extruder(ur, urc, wanted)
                 if current in (None, 1) and wanted != 1:
                     ur.send(urc.WaitTime(START_PAUSE))   # let material start flowing
                 current = wanted
         set_extruder(ur, urc, 1)
-        ur.wait_all()
+        # wait in short steps: on Windows a wait without timeout ignores Ctrl+C
+        while True:
+            try:
+                ur.wait_all(timeout=0.5)
+                break
+            except urc.TimeoutException:
+                pass
         ur.close()
     except (KeyboardInterrupt, Exception) as error:
         ur.abort({1: True, 2: False, 3: False})   # stop the robot and switch the extruder off
