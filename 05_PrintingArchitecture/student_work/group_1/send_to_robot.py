@@ -17,14 +17,14 @@ from print_class import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_tower2.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_trial02.json")
 
-ACCEL = 100.0       # mm/s2
+ACCEL = 200.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([-43.65, -49.2, 145.8], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame([-43.20, -50.9, 142.4], [1, 0, 0], [0, 1, 0])
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
