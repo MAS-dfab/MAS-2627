@@ -15,7 +15,7 @@ from print_class_02 import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_3.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_mike_6.json")
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
