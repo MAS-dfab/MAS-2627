@@ -26,7 +26,7 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([23.47, -44.37, 148.48], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame([23.47, -44.37, 147], [1, 0, 0], [0, 1, 0])
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
