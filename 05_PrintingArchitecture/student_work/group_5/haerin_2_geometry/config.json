@@ -1,0 +1,10 @@
+{
+  "_note": "PLACEHOLDER: set robot_ip (e.g. 192.168.0.10) and measure the three work object points in robot base coordinates, in mm.",
+  "group": "group_five",
+  "robot_ip": "169.254.130.206",
+  "wobj": {
+    "origin": [750.74, 334.21, 19.32],
+    "xaxis": [354.29, 344.26, 19.12],
+    "xypoint": [745.03, -245.99, 18.26]
+  }
+}

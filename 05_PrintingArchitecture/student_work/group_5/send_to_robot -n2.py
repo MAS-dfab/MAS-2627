@@ -83,8 +83,12 @@ def main():
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
 
-            # Set speed IOs (6 and 7)
-            if i % 2 == 0:
+            # Set speed IOs (6 and 7) based on index parity
+            if i - 2 % 190 == 0:
+                ur.send(urc.SetDigital(6, True))
+                ur.send(urc.SetDigital(7, False))
+            else:
+                ur.send(urc.SetDigital(6, False))
                 ur.send(urc.SetDigital(7, True))
                 ur.send(urc.SetDigital(6, False))
             else:
