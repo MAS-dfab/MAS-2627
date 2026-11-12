@@ -26,21 +26,19 @@ START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material start
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-TOOL_FRAME = Frame([-4.54, -42.11, 148.48], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame([23.47, -44.37, 148.48], [1, 0, 0], [0, 1, 0])
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
     # add io
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(6, True))
+    ur.send(urc.SetDigital(7, True))
     
 
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(5, True))
-    ur.send(urc.SetDigital(6, False))
-
 
 
 def load_config():
@@ -80,21 +78,21 @@ def main():
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
-            if extruding_after[i] != extruding:   # the robot switches the IO between the moves
-                extruding = extruding_after[i]
-                if extruding:
-                    extruder_on(ur, urc)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
-                else:
-                    extruder_off(ur, urc)
+                    ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+                    if extruding_after[i] != extruding:   # the robot switches the IO between the moves
+                        extruding = extruding_after[i]
+                        if extruding:
+                            extruder_on(ur, urc)
+                            ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
+                        else:
+                            extruder_off(ur, urc)
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
     except KeyboardInterrupt:  # ctrl c - cancel/intterupt 
         ur.abort()   # TODO: pass digital_outputs to switch the extruder off
         print("aborted")
-        # extruder_off(ur, urc)
+        extruder_off(ur, urc)
 
 
 if __name__ == "__main__":

@@ -84,7 +84,7 @@ def main():
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
 
             # Set speed IOs (6 and 7) based on index parity
-            if i % 2 == 0:
+            if i - 2 % 190 == 0:
                 ur.send(urc.SetDigital(6, True))
                 ur.send(urc.SetDigital(7, False))
             else:
