@@ -6,13 +6,12 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
-sys.path.insert(
-    0,
-    os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "..", "..", "src")
-    )
-)
+import compas_urc as urc
+
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 from print_class import PrintPath
+
 
 # Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
 # https://github.com/MAS-dfab/compas_urc  (pip install git+https://github.com/MAS-dfab/compas_urc.git)
@@ -22,7 +21,7 @@ HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
-ACCEL = 100.0       # mm/s2
+ACCEL = 50.0       # mm/s2
 START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
@@ -32,20 +31,14 @@ EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
 def extruder_on(ur, urc):
-    # 5---false, 6/7---true
-    ur.send(urc.SetDigital(5, True))
-
-    ur.send(urc.SetDigital(6, True))
-    ur.send(urc.SetDigital(7, False))
-
+    # add io
     ur.send(urc.SetDigital(5, False))
     
+
 
 def extruder_off(ur, urc):
     ur.send(urc.SetDigital(5, True))
 
-    ur.send(urc.SetDigital(6, False))
-    ur.send(urc.SetDigital(7, False))
 
 
 def load_config():
@@ -79,14 +72,27 @@ def main():
 
     import compas_urc as urc
 
-        ur = urc.URClient(config["robot_ip"])
+    ur = urc.URClient(config["robot_ip"])
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
-
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+
+            if i  % 5 == 0:   #if (i + i // 20) % 4 == 0:
+                ur.send(urc.SetDigital(7, True))
+                ur.send(urc.SetDigital(6, False))
+                ur.send(urc.WaitTime(0.8))  # wait for 0.1 seconds to ensure the IO state is set before moving
+
+            elif i % 2 == 0:
+                ur.send(urc.SetDigital(7, True))
+                ur.send(urc.SetDigital(6, False))
+
+            else:
+                ur.send(urc.SetDigital(6, True))
+                ur.send(urc.SetDigital(7, False))
+                
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
                 if extruding:
@@ -97,9 +103,10 @@ def main():
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # ctrl c - cancel/intterupt 
         ur.abort()   # TODO: pass digital_outputs to switch the extruder off
         print("aborted")
+        # extruder_off(ur, urc)
 
 
 if __name__ == "__main__":
