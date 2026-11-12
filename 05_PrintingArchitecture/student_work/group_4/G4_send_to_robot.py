@@ -19,13 +19,13 @@ from G4_print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "data", "G4_config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_piece_doublewall_bigwaves.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_ZH_bottomb.json")
 
 # endregion
 
 # region --- PARAMETERS ---
 ACCEL = 1000        # mm/s2
-START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+START_PAUSE = 0.1   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 ASPEED_STOP = 5     # I/O of Extrusion Speed STOP (in Arduino)
 ASPEED_0 = 6        # I/O of Extrusion Speed (ASPEED 0 in Arduino)
 ASPEED_1 = 7        # I/O of Extrusion Speed (ASPEED 1 in Arduino)
@@ -90,7 +90,7 @@ def main():
         if (
             points[i].is_extruder_on
             and points[i + 1].is_extruder_on
-            and points[i].aspeed_io == points[i + 1].aspeed_io
+            # and points[i].aspeed_io == points[i + 1].aspeed_io
         )
         else None
         for i in range(len(points) - 1)
@@ -105,15 +105,18 @@ def main():
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
             if extruding_after[i] != extruding:          # the robot switches the IO between the moves
+                previous_extruding = extruding_after[i]
                 extruding = extruding_after[i]
                 if extruding is None:
                     extruder_off(ur)
                 elif extruding == 0:
                     extruder_on(ur)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
+                    if previous_extruding is None:
+                        ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
                 elif extruding == 1:
                     extruder_on_2(ur)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
+                    if previous_extruding is None:
+                        ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
         extruder_off(ur)
         ur.wait_all()
         ur.close()
