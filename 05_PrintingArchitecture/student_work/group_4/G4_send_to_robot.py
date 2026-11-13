@@ -19,7 +19,7 @@ from G4_print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "data", "G4_config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_ZH_bottomb.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_ZH_flipping4.json")
 
 # endregion
 
