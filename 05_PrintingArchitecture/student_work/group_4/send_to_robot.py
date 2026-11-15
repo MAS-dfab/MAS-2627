@@ -19,7 +19,7 @@ from G4_print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "data", "G4_config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_piece_doublewall_bigwaves.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_01.json")
 
 # endregion
 
