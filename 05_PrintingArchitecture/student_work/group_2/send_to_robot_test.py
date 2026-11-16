@@ -15,7 +15,7 @@ from print_class_02 import PrintPath
 
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_weijiun_2.json")   # = the save panel in design_weijiun.gh
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_weijiun_nonplanar.json")   # = the save panel in design_weijiun.gh
 
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
