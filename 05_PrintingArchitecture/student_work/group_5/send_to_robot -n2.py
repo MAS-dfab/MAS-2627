@@ -93,7 +93,7 @@ def main():
                 ur.send(urc.SetDigital(6, False))
             else:
                 ur.send(urc.SetDigital(7, False))
-                ur.send(urc.SetDigital(6, True))
+                ur.send(urc.SetDigital(6, True)) 
 
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
