@@ -22,19 +22,20 @@ class PrintPoint:
             is_extruder_on: bool, True while printing, False when travelling
             aspeed_io: int, which io to turn on for extrusion speed
     """
-    def __init__(self, frame, layer_index=0, speed=10.0, blend_radius=0.0, is_extruder_on=True, aspeed_io=0):
+    def __init__(self, frame, layer_index=0, speed=10.0, blend_radius=0.0, is_extruder_on=True, aspeed_io=0, aspeed_value=0.0):
         self.frame = frame                    # position + orientation of the tool
         self.layer_index = layer_index        # which layer this point belongs to
         self.speed = speed                    # robot speed in mm/s
         self.blend_radius = blend_radius      # mm, 0 = stop exactly at the point
         self.is_extruder_on = is_extruder_on  # True while printing, False when travelling
         self.aspeed_io = aspeed_io            # which aspeed_io to use
+        self.aspeed_value = aspeed_value      # which aspeed_value for non-planar
 
     def __str__(self):
-        return f"PrintPoint (layer: {self.layer_index}, speed: {self.speed}, extruder on: {self.is_extruder_on}, aspeed_io: {self.aspeed_io}, frame: {self.frame})"
+        return f"PrintPoint (layer: {self.layer_index}, speed: {self.speed}, extruder on: {self.is_extruder_on}, aspeed_io: {self.aspeed_io}, aspeed_value: {self.aspeed_value}, frame: {self.frame})"
 
     def copy(self):
-        return PrintPoint(self.frame.copy(), self.layer_index, self.speed, self.blend_radius, self.is_extruder_on, self.aspeed_io)
+        return PrintPoint(self.frame.copy(), self.layer_index, self.speed, self.blend_radius, self.is_extruder_on, self.aspeed_io, self.aspeed_value)
     
     def to_dict(self):
         return {
@@ -43,14 +44,15 @@ class PrintPoint:
             "speed": self.speed,
             "blend_radius": self.blend_radius,
             "is_extruder_on": self.is_extruder_on,
-            "aspeed_io": self.aspeed_io
+            "aspeed_io": self.aspeed_io,
+            "aspeed_value": self.aspeed_value
         }
 
     @classmethod
     def from_dict(cls, data):
         point, xaxis, yaxis = data["frame"]
         frame = Frame(Point(*point), Vector(*xaxis), Vector(*yaxis))
-        return cls(frame, data["layer_index"], data["speed"], data["blend_radius"], data["is_extruder_on"], data["aspeed_io"])
+        return cls(frame, data["layer_index"], data["speed"], data["blend_radius"], data["is_extruder_on"], data["aspeed_io"], data["aspeed_value"])
 
 class PrintPath:
     """An ordered list of PrintPoints, representing the entire print path.
@@ -83,7 +85,7 @@ class PrintPath:
         frame = Frame(point, printpoint.frame.xaxis, printpoint.frame.yaxis)
         return PrintPoint(frame, printpoint.layer_index, speed, 0.0, False)
 
-    def calculate_blend_radii(self, max_blend_radius=10.0):
+    def calculate_blend_radii(self, max_blend_radius=5.0):
         # calculate blend radii for all printpoints, based on the distance to the next point
         for i in range(len(self.printpoints) - 1):
             p1 = self.printpoints[i]
