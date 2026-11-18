@@ -19,7 +19,7 @@ from G4_print_class import PrintPath
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "data", "G4_config.json")
-PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_ZH_flipping4.json")
+PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_ALLINONE4.json")
 
 # endregion
 
@@ -103,7 +103,7 @@ def main():
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
             if extruding_after[i] != extruding:          # the robot switches the IO between the moves
                 previous_extruding = extruding_after[i]
                 extruding = extruding_after[i]
