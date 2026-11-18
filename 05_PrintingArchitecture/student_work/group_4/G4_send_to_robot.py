@@ -103,7 +103,7 @@ def main():
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
+            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
             if extruding_after[i] != extruding:          # the robot switches the IO between the moves
                 previous_extruding = extruding_after[i]
                 extruding = extruding_after[i]
