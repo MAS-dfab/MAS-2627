@@ -22,7 +22,7 @@ from print_class import PrintPath
 
 
 # Default: inspect the plan without connecting to a robot.
-SEND = False  # Set to False for a dry run without robot connection.
+SEND = True  # Set to False for a dry run without robot connection.
 # All body ASPEED assignments come from the GH JSON.
 
 CONFIG_FILE = os.path.join(HERE, "config.json")
