@@ -20,7 +20,7 @@ from G4_arduino import Arduino
 # Units: mm, mm/s
 HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "data", "G4_config.json")
-PRINT_FILE = os.path.join(HERE, "data", "G4_combined_textured.json")
+PRINT_FILE = os.path.join(HERE, "data", "G4_Final_32_and_33.json")
 
 # endregion
 
@@ -138,7 +138,7 @@ def main():
         switches = []                            # future of each preset switch, in order
         extruding = False
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
-            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.PROCESS))
+            ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
             if i in change_at:                   # the robot switches the preset between the moves
                 _, preset, _ = changes[change_at[i]]
                 switches.append(select_preset(ur, preset))
