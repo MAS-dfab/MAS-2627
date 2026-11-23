@@ -28,7 +28,7 @@ START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material start
 SERIAL_PORT = "COM3"    # TODO: check in Arduino IDE -> Tools -> Port. Close the Serial Monitor first, it blocks the port
 BAUD_RATE = 115200      # must match Serial.begin(...) in the Arduino sketch
 LINE_END = "\n"         # same as the line ending chosen in the Arduino Serial Monitor
-BOOT_TIME = 2.0         # s, the Mega restarts when the port opens (and forgets aspeed), so wait before sending
+BOOT_TIME = 3.0         # s, the Mega restarts when the port opens (and forgets aspeed), so wait before sending
 SPEED_MIN = 0.0         # allowed aspeed values: the script stops before anything moves if one is outside
 SPEED_MAX = 10.0
 
@@ -71,7 +71,6 @@ def set_extruder(ur, urc, index):
         ur.send(urc.SetDigital(1, d1))
         ur.send(urc.SetDigital(2, d2))
         ur.send(urc.SetDigital(3, d3))
-        # ur.send(urc.SetDigital(1, d1))
 
 
 def check_speeds():
@@ -79,8 +78,10 @@ def check_speeds():
     for speeds in [START_SPEEDS] + list(LAYER_SPEEDS.values()):
         for channel, value in speeds.items():
             if channel not in START_SPEEDS:
+                # if channel input is outside of the 2 channels defined, send error to user and stop the program
                 raise ValueError(f"aspeed channel {channel} is not in START_SPEEDS")
             if not SPEED_MIN <= value <= SPEED_MAX:
+                # ensures that the robot never moves with a speed that the extruder cannot handle
                 raise ValueError(f"aspeed {channel} {value} is outside {SPEED_MIN} to {SPEED_MAX}")
 
 
