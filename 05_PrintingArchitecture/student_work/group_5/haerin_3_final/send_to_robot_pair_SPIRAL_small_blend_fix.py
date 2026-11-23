@@ -31,7 +31,7 @@ PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 # Keep the original measured settings unless a tutor confirms changes.
 ACCEL = 100.0
 START_PAUSE = 1.0
-TOOL_FRAME = Frame([23.47, -44.37, 147.5], [1, 0, 0], [0, 1, 0])
+TOOL_FRAME = Frame([17.82, -44.74, 148.5], [1, 0, 0], [0, 1, 0])
 
 # Based on the class wiring diagram; confirm physical wiring before printing.
 DO_EXTRUDER_OFF = 5  # True = OFF, False = ON
