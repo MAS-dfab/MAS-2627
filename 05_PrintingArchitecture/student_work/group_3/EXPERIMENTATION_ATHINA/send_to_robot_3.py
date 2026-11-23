@@ -8,7 +8,7 @@ from compas.geometry import Frame
 from compas.geometry import Point
 from compas.geometry import Transformation
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from print_class import PrintPath
 
 # Reads data/out_printpoints.json (made by design.ghx) and sends it to the robot with compas_urc
@@ -19,8 +19,8 @@ HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints.json")
 
-ACCEL = 100.0       # mm/s2
-START_PAUSE = 1.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
+ACCEL = 300.0       # mm/s2
+START_PAUSE = 2.0   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 
 # TODO: the tool (extruder) as a frame relative to the flange, in mm
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
@@ -28,19 +28,26 @@ TOOL_FRAME = Frame([17.21, -38.91, 141.87], [1, 0, 0], [0, 1, 0])
 EXTRUDER = urc.Tool(TOOL_FRAME, name = "extruder")
 
 # TODO: Fill in the digital output numbers for the extruder on/off, and the logic (True/False) for on/off
-def extruder_on(ur, urc):
+def extruder_on_slow(ur, urc):
     # ur.send(urc.SetDigital(4, False))
     ur.send(urc.SetDigital(5, False))
-    ur.send(urc.SetDigital(6, True))
-    # ur.send(urc.SetDigital(7, True))
+    ur.send(urc.SetDigital(6, False))
+    ur.send(urc.SetDigital(7, True))
     
-    # pass  # ur.send(urc.SetDigital(?, ?))
+    
+def extruder_on_fast(ur, urc):
+    # ur.send(urc.SetDigital(4, False))
+    ur.send(urc.SetDigital(5, False))
+    ur.send(urc.SetDigital(7, False))
+    ur.send(urc.SetDigital(6, True))
+    
 
 def extruder_off(ur, urc):
     # ur.send(urc.SetDigital(4, True))
-    ur.send(urc.SetDigital(5, True))
     ur.send(urc.SetDigital(6, False))
-    # ur.send(urc.SetDigital(7, False))
+    ur.send(urc.SetDigital(7, False))
+    ur.send(urc.SetDigital(5, True))
+
     # pass  # ur.send(urc.SetDigital(?, ?))
 
 
@@ -75,20 +82,50 @@ def main():
 
     import compas_urc as urc
 
-    ur = urc.URClient(config["robot_ip"])
+    ur = urc.URClient(config["robot_ip"], frequency=125)
     ur.connect()
     try:
         ur.send(urc.SetTool(EXTRUDER))
         extruding = False
+        current_fast = None
         for i, (printpoint, frame) in enumerate(zip(points, frames)):
             ur.send(urc.MoveToFrame(frame, printpoint.speed, ACCEL, printpoint.blend_radius, urc.Motion.LINEAR))
             if extruding_after[i] != extruding:   # the robot switches the IO between the moves
                 extruding = extruding_after[i]
                 if extruding:
-                    extruder_on(ur, urc)
-                    ur.send(urc.WaitTime(START_PAUSE))   # the robot stops at this point while it waits
+                    # current_layer = printpoint.layer_index
+                    # if current_layer % 2 == 0:
+                    #     extruder_on_slow(ur, urc)
+                    # else:
+                    #     extruder_on_fast(ur, urc)
+                    extruder_on_fast(ur, urc)
+                    ur.send(urc.WaitTime(START_PAUSE))
+                     # the robot stops at this point while it waits
+
                 else:
                     extruder_off(ur, urc)
+                    current_fast = None
+
+
+            # fast = (printpoint.id // 179) % 2 == 0
+
+            # if extruding and fast != current_fast:
+
+            #     current_fast = fast
+
+            #     if fast:
+            #         # ur.send(urc.WaitTime(START_PAUSE))
+            #         extruder_on_fast(ur, urc)
+            #     else:
+            #         # ur.send(urc.WaitTime(START_PAUSE))
+            #         extruder_on_slow(ur, urc)
+
+                # if current_layer != 0 and current_layer % 6 == 0:
+                #     extruder_on_slow(ur, urc)
+                # else:
+                #     extruder_on_fast(ur, urc)
+
+
         extruder_off(ur, urc)
         ur.wait_all()
         ur.close()
