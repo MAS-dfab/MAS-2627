@@ -20,6 +20,8 @@ HERE = os.path.dirname(__file__)
 CONFIG_FILE = os.path.join(HERE, "config.json")
 PRINT_FILE = os.path.join(HERE, "data", "out_printpoints_weijiun_nonplanar.json")   # = the save panel in design_weijiun.gh
 
+SEND = False        # False = test run: only prints what would be sent, no robot or Arduino needed. True = real run
+
 ACCEL = 100.0       # mm/s2
 START_PAUSE = 0.2   # s, wait after the extruder turns on, so the material starts flowing before the robot moves
 # START_PAUSE = 1.0 (original pause value)
@@ -86,6 +88,9 @@ def check_speeds():
 
 
 def open_arduino():
+    if not SEND:
+        print(f"test: would open {SERIAL_PORT} at {BAUD_RATE} baud, then wait {BOOT_TIME} s")
+        return TestArduino()
     arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
     time.sleep(BOOT_TIME)   # opening the port restarts the Mega
     arduino.reset_input_buffer()
@@ -99,6 +104,66 @@ def set_speeds(arduino, speeds):
         arduino.write((command + LINE_END).encode())
         print("serial:", command)
     arduino.flush()
+
+
+# ---- test run (SEND = False): stand-ins with the same methods as the real robot and Arduino ----
+class TestArduino(object):
+    def write(self, data):
+        print("  test: bytes to the Arduino:", data)   # shows the exact text and line ending
+
+    def flush(self):
+        pass
+
+    def close(self):
+        print("test: serial port closed")
+
+
+class TestFuture(object):
+    # the real one completes when the robot has done the move; here it is done at once
+    def __init__(self, move):
+        self.move = move
+
+    def result(self, timeout=None):
+        print(f"test: robot reaches move {self.move}")
+        return True
+
+
+class TestRobot(object):
+    def __init__(self, urc):
+        self.urc = urc
+        self.moves = 0
+        self.last = None
+
+    def send(self, instruction):
+        if isinstance(instruction, self.urc.MoveToFrame):
+            self.moves += 1
+            self.last = instruction
+            if self.moves == 1:
+                self.print_move("first")
+        elif isinstance(instruction, self.urc.SetDigital):
+            io, value = instruction.params[:2]
+            print(f"after move {self.moves}: DO{int(io)} {bool(value)}")
+        elif isinstance(instruction, self.urc.WaitTime):
+            print(f"after move {self.moves}: wait {instruction.params[0]:g} s")
+        else:
+            print(f"after move {self.moves}: {type(instruction).__name__}")
+        return TestFuture(self.moves)
+
+    def print_move(self, name):
+        # params of a move: x, y, z in m, rotation, speed in m/s
+        x, y, z = [round(v * 1000, 1) for v in self.last.params[:3]]
+        print(f"{name} move ({self.moves}), robot base: x {x}, y {y}, z {z} mm, speed {self.last.params[6] * 1000:g} mm/s")
+
+    def wait_all(self, timeout=None):
+        pass
+
+    def close(self):
+        self.print_move("last")
+        print(f"test: {self.moves} moves, robot disconnected")
+
+    def abort(self, digital_outputs=None):
+        print("test: abort, outputs set to", digital_outputs)
+# ---------------------------------------------------------------------------------
 
 
 def wait_for(urc, wait):
@@ -147,10 +212,14 @@ def main():
     import compas_urc as urc
     # Imported here rather than at the top of this script
 
-    ur = urc.URClient(config["robot_ip"])
-    # Reads robot IP address from config file
-    ur.connect()
-    # Sets up a connection to the robot
+    if SEND:
+        ur = urc.URClient(config["robot_ip"])
+        # Reads robot IP address from config file
+        ur.connect()
+        # Sets up a connection to the robot
+    else:
+        print(f"test: would connect to the robot at {config['robot_ip']}")
+        ur = TestRobot(urc)
 
     arduino = None
     try:
