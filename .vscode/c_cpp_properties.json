@@ -1,0 +1,44 @@
+{
+  "configurations": [
+    {
+      "name": "Arduino Nano R4",
+      "compilerPath": "${env:LOCALAPPDATA}/Arduino15/packages/arduino/tools/arm-none-eabi-gcc/7-2017q4/bin/arm-none-eabi-g++.exe",
+      "compilerArgs": ["-mcpu=cortex-m4", "-mthumb", "-mfloat-abi=hard", "-mfpu=fpv4-sp-d16"],
+      "intelliSenseMode": "gcc-arm",
+      "cppStandard": "gnu++17",
+      "includePath": [
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/cores/arduino",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/cores/arduino/tinyusb",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/NANOR4",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/inc",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/inc/api",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/inc/instances",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/arm/CMSIS_5/CMSIS/Core/Include",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra_gen",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra_cfg/fsp_cfg/bsp",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra_cfg/fsp_cfg",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/src/r_usb_basic/src/driver/inc",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/src/r_sce/crypto_procedures/src/sce5/plainkey/private/inc",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/src/r_sce/crypto_procedures/src/sce5/plainkey/public/inc",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/src/r_sce/common",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/variants/MINIMA/includes/ra/fsp/src/r_sce",
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/libraries/**"
+      ],
+      "forcedInclude": [
+        "${env:LOCALAPPDATA}/Arduino15/packages/arduino/hardware/renesas_uno/1.6.0/cores/arduino/Arduino.h"
+      ],
+      "defines": [
+        "ARDUINO=10607",
+        "ARDUINO_NANO_R4",
+        "ARDUINO_UNOR4_MINIMA",
+        "F_CPU=48000000",
+        "ARDUINO_ARCH_RENESAS",
+        "ARDUINO_ARCH_RENESAS_UNO",
+        "_RA_CORE=CM4",
+        "_RENESAS_RA_",
+        "CFG_TUSB_MCU=OPT_MCU_RAXXX"
+      ]
+    }
+  ],
+  "version": 4
+}
