@@ -2,11 +2,11 @@
 #include <PubSubClient.h>
 #include <Adafruit_NeoPixel.h>
 
-const char* WIFI_SSID  = "a";
-const char* WIFI_PASS  = "12345678";
+const char* WIFI_SSID  = "Mike Pix";
+const char* WIFI_PASS  = "epsilon1994";
 const char* MQTT_HOST  = "broker.emqx.io";
 const int   MQTT_PORT  = 1883;
-const char* MQTT_TOPIC = "ananya/neo/set";          // (1) semicolon
+const char* MQTT_TOPIC = "mike/neo/set";          // (1) semicolon
 
 const int LED_PIN   = 6;                           // (2) pin name, not 6
 const int LED_COUNT = 1;

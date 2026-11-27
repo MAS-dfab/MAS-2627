@@ -13,7 +13,13 @@ void setup() {
 }
 
 void loop() {
-  strip.setPixelColor(0, strip.Color(100, 100, 100));  // soft white
+  strip.setPixelColor(0, strip.Color(40, 160, 225));  // soft white
   strip.show();                                        // actually send it
-  delay(50);
+  delay(500);
+  strip.setPixelColor(0, strip.Color(225, 40, 160));  // soft white
+  strip.show();                                        // actually send it
+  delay(500);
+  strip.setPixelColor(0, strip.Color(160, 225, 40));  // soft white
+  strip.show();                                        // actually send it
+  delay(500);
 }

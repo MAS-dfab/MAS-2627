@@ -1,0 +1,8 @@
+# Python
+.venv/
+__pycache__/
+# Copyrighted audio (user's own files) and everything generated from it: never commit
+sounds/*.mp3
+sounds/*.wav
+esp32_wifi_to_r4/sounds.h
+python/preview/
